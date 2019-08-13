@@ -7,7 +7,7 @@
   <packaging>pom</packaging>
   <modules>
   	<module>jvm-introduction</module>
-    <module>jdk_0100</module>
+    <module>java-struct</module>
   </modules>
 
    <build>
