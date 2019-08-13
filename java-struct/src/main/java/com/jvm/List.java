@@ -1,5 +1,9 @@
 package com.jvm;
 
+/**
+ * 自定义List接口
+ * @param <T>
+ */
 public interface List<T> {
 
     void add(T t);
