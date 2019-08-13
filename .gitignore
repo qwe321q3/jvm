@@ -27,4 +27,9 @@ hs_err_pid*
 /jvm.iml
 /.idea/
 /java-struct/java-struct.iml
+/jvm-introduction/.settings
 /jvm-introduction/jvm-introduction.iml
+/jvm-introduction/target
+/java-struct/target
+/java-struct/.settings
+/target
