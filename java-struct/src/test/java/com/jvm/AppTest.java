@@ -31,10 +31,10 @@ public class AppTest
         myLinkedList.add("77");
 
 //        myLinkedList.add(2,"aaa");
-//        System.out.println(myLinkedList);
+        System.out.println(myLinkedList);
 //        myLinkedList.remove(3);
 
-        myLinkedList.removeAll();
+//        myLinkedList.removeAll();
 
         System.out.println(myLinkedList.isEmpty());
         System.out.println(myLinkedList.size());

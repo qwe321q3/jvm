@@ -26,12 +26,12 @@ public class MyLinkedList<T> implements List<T> {
             throw new RuntimeException("索引越界"+index);
         }
 
-        Node<T> preNode = head.next; //0元素
+        Node<T> p = head; //0元素
 
-        for(int i = 0; i<index; i ++){
-            preNode = preNode.next;
+        for(int i = 0; i<=index; i ++){
+            p = p.next;
         }
-        return preNode.data;
+        return p.data;
     }
 
     @Override
@@ -55,21 +55,16 @@ public class MyLinkedList<T> implements List<T> {
             throw new RuntimeException("索引越界"+index);
         }
 
-        Node<T> preNode = head.next; //0元素
+        Node<T> preNode = head; //0元素
 
-        for(int i = 0; i<index-1; i ++){
+        for(int i = 0; i<index; i ++){
             preNode = preNode.next;
         }
 
         Node<T>node = new Node<>(t);
 
-        if(index ==0 ){
-            node.next = preNode;
-            head.next = node;
-        }else {
-            node.next = preNode.next;
-            preNode.next = node;
-        }
+        node.next = preNode.next;
+        preNode.next = node;
 
         size ++ ;
     }
