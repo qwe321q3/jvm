@@ -1,3 +1,5 @@
+package com.jvm;
+
 import java.util.Arrays;
 
 public class MyArrayList<T> implements List<T>{
@@ -104,6 +106,16 @@ public class MyArrayList<T> implements List<T>{
 
         elementData[index] = t;
         size++;
+    }
+
+    @Override
+    public void remove(int index) {
+
+    }
+
+    @Override
+    public void removeAll() {
+
     }
 
     @Override

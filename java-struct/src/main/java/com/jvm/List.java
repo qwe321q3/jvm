@@ -1,3 +1,5 @@
+package com.jvm;
+
 public interface List<T> {
 
     void add(T t);
@@ -10,6 +12,10 @@ public interface List<T> {
 
     boolean contain(T t);
 
-    void add(int index,T t);
+    void add(int index, T t);
+
+    void remove(int index);
+
+    void removeAll();
 
 }
