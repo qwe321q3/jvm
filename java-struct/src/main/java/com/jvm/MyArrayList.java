@@ -126,7 +126,7 @@ public class MyArrayList<T> implements List<T>{
 
         checkRange(index);
 
-        elementData[index] = null;
+       // elementData[index] = null;
 
         for (int i = index,len= elementData.length-1;i<len ;i++) {
             elementData[i] = elementData[i+1];
