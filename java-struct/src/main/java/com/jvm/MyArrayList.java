@@ -94,9 +94,8 @@ public class MyArrayList<T> implements List<T>{
     @Override
     public void add(int index, T t) {
 
-        if(index < 0 || index > size){
-            throw new RuntimeException("索引越界"+index);
-        }
+        checkRange(index);
+
 
         grow();
 
@@ -108,14 +107,43 @@ public class MyArrayList<T> implements List<T>{
         size++;
     }
 
+    /**
+     * 校验索引范围
+     * @param index
+     */
+    private  void checkRange(int index){
+        if(index < 0 || index > size){
+            throw new RuntimeException("索引越界"+index);
+        }
+    }
+
+    /**
+     * 1、删除索引位的元素，索引位后的其他元素都向前1位
+     * @param index
+     */
     @Override
     public void remove(int index) {
+
+        checkRange(index);
+
+        elementData[index] = null;
+
+        for (int i = index,len= elementData.length-1;i<len ;i++) {
+            elementData[i] = elementData[i+1];
+        }
+
+        if(index != elementData.length-1){
+            elementData[elementData.length-1] = null;
+        }
+
+        size -- ;
 
     }
 
     @Override
     public void removeAll() {
-
+        elementData = null;
+        elementData = DEFAULT_EMPTY_CAPACITY;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.jvm;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for simple App.
@@ -40,8 +40,28 @@ public class AppTest
         System.out.println(myLinkedList.size());
         System.out.println(myLinkedList.get(3));
         System.out.println(myLinkedList);
+
         
-        
+    }
+
+    @Test
+    public void testArrayList(){
+        List<String> arrayList = new MyArrayList<>();
+
+        arrayList.add("aaa");
+        arrayList.add("bbb");
+        arrayList.add("ccc");
+        arrayList.add("ddd");
+        arrayList.add("eee");
+
+        System.out.println(arrayList);
+        System.out.println(arrayList.size());
+
+        arrayList.remove(0);
+
+        System.out.println(arrayList);
+        System.out.println(arrayList.size());
+
     }
     
 }
