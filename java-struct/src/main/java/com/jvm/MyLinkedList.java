@@ -1,7 +1,7 @@
 package com.jvm;
 
 /**
- * 1、链表是由结点组成
+ * 1、链表是由存储数据的单元组成，单元之间通过地址指向串联起来
  * 2、链表的每个结点都至少有2个域来组成，1.一个域用于数据存储 2.另外一个域是指向其他单元的指针
  * 单链表的会有一个哑元结点，也叫头结点
  * 头结点不存在任何数据，next执行0号元素
@@ -26,7 +26,7 @@ public class MyLinkedList<T> implements List<T> {
             throw new RuntimeException("索引越界"+index);
         }
 
-        Node<T> p = head; //0元素
+        Node<T> p = head;
 
         for(int i = 0; i<=index; i ++){
             p = p.next;
@@ -55,7 +55,7 @@ public class MyLinkedList<T> implements List<T> {
             throw new RuntimeException("索引越界"+index);
         }
 
-        Node<T> preNode = head; //0元素
+        Node<T> preNode = head;
 
         for(int i = 0; i<index; i ++){
             preNode = preNode.next;
