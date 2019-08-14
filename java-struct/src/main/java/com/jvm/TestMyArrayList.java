@@ -3,7 +3,7 @@ package com.jvm;
 public class TestMyArrayList {
 
     public static void main(String[] args) {
-        MyArrayList<String>myArrayList = new MyArrayList<>();
+        List<String>myArrayList = new MyArrayList<>();
 
         myArrayList.add("11");
         myArrayList.add("432");
