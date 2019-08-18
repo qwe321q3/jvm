@@ -1,5 +1,7 @@
 package com.jvm;
 
+import com.jvm.binarytree.BinaryTree;
+import com.jvm.binarytree.LinkedBinaryTree;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -61,6 +63,26 @@ public class AppTest
 
         System.out.println(arrayList);
         System.out.println(arrayList.size());
+
+    }
+
+    @Test
+    public void testLinkedBinaryTree(){
+
+
+        LinkedBinaryTree.Node node5 = new LinkedBinaryTree.Node(5,null,null);
+        LinkedBinaryTree.Node node4 = new LinkedBinaryTree.Node(4,null,node5);
+        LinkedBinaryTree.Node node7 = new LinkedBinaryTree.Node(7,null,null);
+        LinkedBinaryTree.Node node6 = new LinkedBinaryTree.Node(6,null,node7);
+        LinkedBinaryTree.Node node3 = new LinkedBinaryTree.Node(3,null,null);
+        LinkedBinaryTree.Node node2 = new LinkedBinaryTree.Node(2,node3,node6);
+        LinkedBinaryTree.Node node1 = new LinkedBinaryTree.Node(1,node4,node2);
+
+        BinaryTree<Integer> binaryTree = new LinkedBinaryTree<>(node1);
+
+
+        System.out.println(binaryTree);
+        System.out.println("二叉树高度："+ binaryTree.height());
 
     }
     
