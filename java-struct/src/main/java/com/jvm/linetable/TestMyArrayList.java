@@ -1,4 +1,4 @@
-package com.jvm;
+package com.jvm.linetable;
 
 public class TestMyArrayList {
 
