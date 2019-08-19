@@ -1,5 +1,8 @@
 package com.jvm.binarytree;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * 链表实现的二叉树
  * @param <E>
@@ -95,8 +98,32 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
         }
     }
 
+    /**
+     * 1、先把跟结点放入到队列中
+     * 2、判断队列是否为空，如果为空的话，循环中队列中的数据
+     * 3、循环取出队列中的数据，同时把队列中的数据的左子树和右子树放入的到队列中，循环以上操作。
+     */
     @Override
     public void levelOrderTraverse() {
+        System.out.print("层次遍历：");
+        levelOrderTraverse(root);
+        System.out.println();
+    }
+
+    private void levelOrderTraverse(Node<E> node){
+        Queue<Node> nodeQueue = new LinkedList<>();
+        nodeQueue.add(node);
+        while(!nodeQueue.isEmpty()){
+            for(int i =0 ;i<nodeQueue.size();i++){
+
+                Node<E> eNode = nodeQueue.poll();
+                if(eNode==null) continue;
+                System.out.print(eNode.value+" ");
+                nodeQueue.add(eNode.leftNode);
+                nodeQueue.add(eNode.rightNode);
+            }
+        }
+
 
     }
 

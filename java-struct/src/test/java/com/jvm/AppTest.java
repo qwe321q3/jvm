@@ -89,6 +89,7 @@ public class AppTest
         binaryTree.preOrderTraverse();
         binaryTree.inOrderTraverse();
         binaryTree.postOrderTraverse();
+        binaryTree.levelOrderTraverse();
 
     }
 
