@@ -86,6 +86,9 @@ public class AppTest
 
         System.out.println(binaryTree);
         System.out.println("二叉树高度："+ binaryTree.height());
+        binaryTree.preOrderTraverse();
+        binaryTree.inOrderTraverse();
+        binaryTree.postOrderTraverse();
 
     }
 

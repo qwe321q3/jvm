@@ -30,17 +30,69 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
 
     @Override
     public void preOrderTraverse() {
+        System.out.print("先序遍历: ");
+        preOrderTraverse(root);
+        System.out.println();
+    }
+
+    /**
+     * 先序遍历
+     * 1、从根开始遍历
+     * 2、先左子树，然后右子树遍历
+     * @param node
+     */
+    private void preOrderTraverse(Node<E> node){
+        if(node != null){
+
+            System.out.print(node.value+" ");
+            preOrderTraverse(node.leftNode);
+            preOrderTraverse(node.rightNode);
+        }
 
     }
 
+    /**
+     * 中序排列：
+     * 1、先左子树，再右子树
+     * 2、然后在根
+     */
     @Override
     public void inOrderTraverse() {
+        System.out.print("中序遍历：");
+        inOrderTraverse(root);
+        System.out.println();
 
     }
 
+    private void inOrderTraverse(Node<E> node){
+        if(node != null){
+            inOrderTraverse(node.leftNode);
+            System.out.print(node.value+" ");
+            inOrderTraverse(node.rightNode);
+        }
+
+    }
+
+    /**
+     * 1、先左子树
+     * 2、右子树
+     * 3、根节点
+     */
     @Override
     public void postOrderTraverse() {
+        System.out.print("后序遍历：");
+        postOrderTraverse(root);
+        System.out.println();
+    }
 
+    private void postOrderTraverse(Node<E>node){
+        if(node != null){
+
+            postOrderTraverse(node.leftNode);
+            postOrderTraverse(node.rightNode);
+            System.out.print(node.value+" ");
+
+        }
     }
 
     @Override
@@ -84,8 +136,6 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
         if(node==null){
             return 0;
         }else {
-            System.out.println(node.value);
-
             int nl = height(node.leftNode);
 
             int nr = height(node.rightNode);
