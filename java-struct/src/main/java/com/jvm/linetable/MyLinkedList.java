@@ -1,4 +1,4 @@
-package com.jvm;
+package com.jvm.linetable;
 
 /**
  * 1、链表是由存储数据的单元组成，单元之间通过地址指向串联起来

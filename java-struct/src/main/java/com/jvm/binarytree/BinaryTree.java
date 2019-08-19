@@ -2,47 +2,52 @@ package com.jvm.binarytree;
 
 /**
  * 二叉树接口
- * 1、数组实现
- * 2、链表实现
  */
-public interface BinaryTree<E> {
+public interface BinaryTree<E>{
 
-    boolean isEmpty();
 
     int size();
 
     int height();
 
-    LinkedBinaryTree.Node<E> findKey(E e);
+    boolean isEmpty();
 
     /**
-     * 先序遍历
+     * 先序遍历  NLR 递归实现
      */
-    void nlr();
+    void preOrderTraverse();
 
     /**
-     * 中序遍历
-     */
-    void lnr();
-
-    /**
-     * 右序遍历
-     */
-    void rln();
-
-    /**
-     * 层次遍历（非递归） 队列
-     */
-    void levelOrderTraverse();
-
-
-    /**
-     * 中序遍历(非递归) 栈
+     * 中序遍历  LNR 递归实现
      */
     void inOrderTraverse();
 
+    /**
+     * 后序遍历 LRN  递归实现
+     */
+    void postOrderTraverse();
 
+    /**
+     * 层次遍历  队列实现
+     */
+    void levelOrderTraverse();
 
+    /**
+     * 中序遍历   栈实现
+     */
+    void inOrderTraverseByStack();
+
+    /**
+     * 查询对应的Node节点
+     * @param e
+     * @return
+     */
+    E findKey(E e);
+
+    /**
+     * 元素是否存在树中
+     * @param e
+     * @return
+     */
+    boolean contain(E e);
 }
-
-

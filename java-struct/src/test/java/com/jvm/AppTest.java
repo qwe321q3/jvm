@@ -2,6 +2,9 @@ package com.jvm;
 
 import com.jvm.binarytree.BinaryTree;
 import com.jvm.binarytree.LinkedBinaryTree;
+import com.jvm.linetable.List;
+import com.jvm.linetable.MyArrayList;
+import com.jvm.linetable.MyLinkedList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -22,7 +25,7 @@ public class AppTest
     
     @Test
     public void TestMyLinkedList(){
-        MyLinkedList<String>myLinkedList = new MyLinkedList<>();
+        MyLinkedList<String> myLinkedList = new MyLinkedList<>();
 
         myLinkedList.add("11");
         myLinkedList.add("432");
@@ -85,5 +88,5 @@ public class AppTest
         System.out.println("二叉树高度："+ binaryTree.height());
 
     }
-    
+
 }

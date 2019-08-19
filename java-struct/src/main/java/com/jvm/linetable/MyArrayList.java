@@ -1,4 +1,4 @@
-package com.jvm;
+package com.jvm.linetable;
 
 import java.util.Arrays;
 

@@ -29,6 +29,41 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
     }
 
     @Override
+    public void preOrderTraverse() {
+
+    }
+
+    @Override
+    public void inOrderTraverse() {
+
+    }
+
+    @Override
+    public void postOrderTraverse() {
+
+    }
+
+    @Override
+    public void levelOrderTraverse() {
+
+    }
+
+    @Override
+    public void inOrderTraverseByStack() {
+
+    }
+
+    @Override
+    public E findKey(E e) {
+        return null;
+    }
+
+    @Override
+    public boolean contain(E e) {
+        return false;
+    }
+
+    @Override
     public int size() {
         return 0;
     }
