@@ -5,14 +5,15 @@ import java.util.Queue;
 
 /**
  * 链表实现的二叉树
+ *
  * @param <E>
  */
-public class LinkedBinaryTree<E> implements BinaryTree<E>{
+public class LinkedBinaryTree<E> implements BinaryTree<E> {
 
     /**
      * 根节点
      */
-    Node<E> root ;
+    Node<E> root;
 
     public LinkedBinaryTree(Node<E> root) {
         this.root = root;
@@ -42,12 +43,13 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
      * 先序遍历
      * 1、从根开始遍历
      * 2、先左子树，然后右子树遍历
+     *
      * @param node
      */
-    private void preOrderTraverse(Node<E> node){
-        if(node != null){
+    private void preOrderTraverse(Node<E> node) {
+        if (node != null) {
 
-            System.out.print(node.value+" ");
+            System.out.print(node.value + " ");
             preOrderTraverse(node.leftNode);
             preOrderTraverse(node.rightNode);
         }
@@ -67,10 +69,10 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
 
     }
 
-    private void inOrderTraverse(Node<E> node){
-        if(node != null){
+    private void inOrderTraverse(Node<E> node) {
+        if (node != null) {
             inOrderTraverse(node.leftNode);
-            System.out.print(node.value+" ");
+            System.out.print(node.value + " ");
             inOrderTraverse(node.rightNode);
         }
 
@@ -88,12 +90,12 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
         System.out.println();
     }
 
-    private void postOrderTraverse(Node<E>node){
-        if(node != null){
+    private void postOrderTraverse(Node<E> node) {
+        if (node != null) {
 
             postOrderTraverse(node.leftNode);
             postOrderTraverse(node.rightNode);
-            System.out.print(node.value+" ");
+            System.out.print(node.value + " ");
 
         }
     }
@@ -110,25 +112,36 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
         System.out.println();
     }
 
-    private void levelOrderTraverse(Node<E> node){
+    private void levelOrderTraverse(Node<E> node) {
         Queue<Node> nodeQueue = new LinkedList<>();
         nodeQueue.add(node);
-        while(!nodeQueue.isEmpty()){
-            for(int i =0 ;i<nodeQueue.size();i++){
+        while (!nodeQueue.isEmpty()) {
+            //     for(int i =0 ;i<nodeQueue.size();i++){
 
-                Node<E> eNode = nodeQueue.poll();
-                if(eNode==null) continue;
-                System.out.print(eNode.value+" ");
+            Node<E> eNode = nodeQueue.poll();
+            if (eNode != null) {
+                System.out.print(eNode.value + " ");
                 nodeQueue.add(eNode.leftNode);
                 nodeQueue.add(eNode.rightNode);
             }
+//            }
         }
 
 
     }
 
+    /**
+     * 使用栈来做中序循环
+     */
     @Override
     public void inOrderTraverseByStack() {
+        System.out.print("中序遍历(栈操作):");
+    }
+
+    private void inOrderTraverseByStack(Node<E> node){
+
+
+
 
     }
 
@@ -144,7 +157,20 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
 
     @Override
     public int size() {
-        return 0;
+        return size(root);
+    }
+
+    private int size(Node<E> node){
+        if (node == null) {
+            return 0;
+        } else {
+            int nl = size(node.leftNode);
+
+            int nr = size(node.rightNode);
+
+
+            return nl + nr + 1;
+        }
     }
 
     @Override
@@ -156,13 +182,14 @@ public class LinkedBinaryTree<E> implements BinaryTree<E>{
      * 1、如果根节点为空，返回0
      * 2、先遍历左子树，在遍历右子树
      * 3、比较左子树和右子树的高度，谁大，就用谁+1  获取整个二叉树的高度
+     *
      * @param node
      * @return
      */
-    private int height(Node<E> node){
-        if(node==null){
+    private int height(Node<E> node) {
+        if (node == null) {
             return 0;
-        }else {
+        } else {
             int nl = height(node.leftNode);
 
             int nr = height(node.rightNode);

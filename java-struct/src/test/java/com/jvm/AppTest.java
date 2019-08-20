@@ -91,6 +91,8 @@ public class AppTest
         binaryTree.postOrderTraverse();
         binaryTree.levelOrderTraverse();
 
+        System.out.println("节点个数："+binaryTree.size());
+
     }
 
 }
