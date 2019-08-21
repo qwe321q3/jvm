@@ -1,5 +1,6 @@
 package com.jvm.binarytree;
 
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -131,27 +132,90 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
     }
 
     /**
+     *
+     * 1、先把根节点放如到栈底中
+     * 2、查找遍历左右的左子树依次入栈
+     * 3、如果栈中元素不为空的话，取出栈顶元素打印元素之后，然后设置current值为右子树结点
      * 使用栈来做中序循环
      */
     @Override
     public void inOrderTraverseByStack() {
-        System.out.print("中序遍历(栈操作):");
+        System.out.print("中序遍历(栈操作): ");
+        Node<E> current = root;
+
+        Deque<Node<E>> deque = new LinkedList<>();
+        while(current!=null || deque.size()>0){
+            while(current!=null){
+                deque.push(current);
+                current = current.leftNode;
+            }
+            if(!deque.isEmpty()){
+                Node node = deque.poll();
+                System.out.print(node.value+" ");
+                current = node.rightNode;
+            }
+
+        }
+
+        System.out.println();
     }
 
-    private void inOrderTraverseByStack(Node<E> node){
-
-
-
-
-    }
 
     @Override
     public E findKey(E e) {
-        return null;
+
+        Node<E>node = findKey(root,e);
+        System.out.println("findKey: "+node);
+
+        return node.value;
     }
+
+    public Node<E> findKey(Node<E> node,E e){
+
+        if(node == null){
+            return null;
+        }
+
+        if(node.value == e){
+            return node;
+        }else{
+
+            Node<E> left  = findKey(node.leftNode,e);
+            Node<E> right = findKey(node.rightNode,e);
+
+            if(left!=null && left.value==e){
+                return left;
+            }else if(right!=null&& right.value == e ){
+                return right;
+            }else{
+                return null;
+            }
+
+        }
+    }
+
+
 
     @Override
     public boolean contain(E e) {
+
+        return contain(root,e);
+    }
+
+    boolean contain(Node<E> node,E e){
+        Queue<Node> nodeQueue = new LinkedList<>();
+        nodeQueue.add(node);
+        while (!nodeQueue.isEmpty()) {
+
+            Node<E> eNode = nodeQueue.poll();
+            if (eNode != null) {
+                if(eNode.value == e){
+                    return true;
+                }
+                nodeQueue.add(eNode.leftNode);
+                nodeQueue.add(eNode.rightNode);
+            }
+        }
         return false;
     }
 
@@ -160,7 +224,7 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
         return size(root);
     }
 
-    private int size(Node<E> node){
+    private int size(Node<E> node) {
         if (node == null) {
             return 0;
         } else {
