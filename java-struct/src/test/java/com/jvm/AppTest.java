@@ -38,6 +38,8 @@ public class AppTest {
 //        myLinkedList.remove(3);
 
 //        myLinkedList.removeAll();
+        String tr = "11";
+        System.out.println(tr+": 是否存在："+myLinkedList.contain(tr));
 
         System.out.println(myLinkedList.isEmpty());
         System.out.println(myLinkedList.size());

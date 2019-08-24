@@ -46,6 +46,17 @@ public class MyLinkedList<T> implements List<T> {
 
     @Override
     public boolean contain(T t) {
+        Node<T> node = head;
+        if(t == node.data){
+            return true;
+        }
+
+        while((node=node.next)!=null){
+            if(node.data==t){
+                return true;
+            }
+        }
+
         return false;
     }
 
