@@ -3,6 +3,7 @@ package com.jvm.order;
 
 /**
  * 折半算法 / 2分算法
+ * 找到某个值得索引位置。
  */
 public class HalfOrder {
 
@@ -23,11 +24,9 @@ public class HalfOrder {
 
         int heigt = arrs.length;
 
-        int mid = 0;
-
         while(low<=heigt){
 
-            mid = (heigt+low)/2;
+            int mid = (heigt+low)/2;
             if(arrgs[mid]<a){
                 low = mid + 1;
             }else if(arrgs[mid] >a){
