@@ -12,6 +12,8 @@ import java.util.Arrays;
  * 1、一次保存
  * 2、多次保存 / 冲突保存
  * 3、值一样是不保存
+ *
+ *
  */
 public class HashTable {
 
@@ -81,18 +83,20 @@ public class HashTable {
         System.out.println("hash: "+key+ "\tvalue: "+object);
         //判断根据hash判断在hash表中寻找查看数据是否在hash表，是否是第一次保存
         if(this.elementData[key]==null){
-            Node head = new Node();
-            //第一次保存，直接保存
-            elementData[key] = head;
+//            Node head = new Node();
             //创建链表节点
             Node node = new Node(object);
-
-            head.next = node;
+            //第一次保存，直接保存
+            elementData[key] = node;
+//            //创建链表节点
+//            Node node = new Node(object);
+//
+//            head.next = node;
 
         }else{
 
-            Node head = this.elementData[key];
-            Node node  = head.next;
+            Node node = this.elementData[key];
+//            Node node  = head.next;
             //相同时，不保存数据
             while(node.next!=null){
                 if(node.data.equals(object)){
