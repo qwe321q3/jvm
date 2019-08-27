@@ -83,18 +83,24 @@ public class MyQuickSort {
 
 
     public static void quickSort(int[] arrs){
+        long startTime = System.currentTimeMillis();
 
         int low = 0;
 
         int height = arrs.length-1;
 
         quickSort(arrs,low,height);
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("耗费时间为："+(endTime-startTime));
+
     }
 
     public static void main(String[] args) {
 
-        int[] arrs = new int[]{23,65,3,63,89,33,12,90,45};
-
+//        int[] arrs = new int[]{23,65,3,63,89,33,12,90,45};
+        int[] arrs = DataChecker.randomArray();
         System.out.println("快速排序前："+Arrays.toString(arrs));
         quickSort(arrs);
         System.out.println("快速排序后："+Arrays.toString(arrs));
