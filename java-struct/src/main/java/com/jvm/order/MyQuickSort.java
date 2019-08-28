@@ -100,10 +100,12 @@ public class MyQuickSort {
     public static void main(String[] args) {
 
 //        int[] arrs = new int[]{23,65,3,63,89,33,12,90,45};
-        int[] arrs = DataChecker.randomArray();
+        int[] arrs = DataChecker.randomArray(15);
         System.out.println("快速排序前："+Arrays.toString(arrs));
         quickSort(arrs);
         System.out.println("快速排序后："+Arrays.toString(arrs));
+
+        System.out.println(DataChecker.check(arrs));
 
     }
 }
