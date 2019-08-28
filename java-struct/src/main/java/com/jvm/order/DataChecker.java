@@ -14,17 +14,45 @@ public class DataChecker {
      * 数组的数据随机在10000以内
      * @return
      */
-    public static int[] randomArray(){
+    public static int[] randomArray(int size){
         Random random = new Random();
-        int[] arrs = new int[10000];
-        for (int i = 0; i < 10000; i++) {
-            arrs[i] = random.nextInt(10000);
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = random.nextInt(size);
         }
-        return arrs;
+        return arr;
     }
 
+
+    /**
+     * 数据校验
+     * @param arr
+     * @return
+     */
+    public static boolean check(int[] arr){
+
+        int[] arr2 = Arrays.copyOfRange(arr, 0, arr.length);
+
+        Arrays.sort(arr2);
+
+        for (int i = 0, len = arr.length; i < len; i++) {
+
+            if (arr[i] != arr2[i]) {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
+
+
     public static void main(String[] args) {
-        System.out.println(Arrays.toString(randomArray()));
+
+        int[]arr = randomArray(10);
+        System.out.println("排序前："+Arrays.toString(arr));
+        Arrays.sort(arr);
+        System.out.println("排序后："+Arrays.toString(arr));
 
 
     }
