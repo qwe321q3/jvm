@@ -9,9 +9,16 @@ import java.util.Arrays;
 public class InsertSort {
 
     public static void main(String[] args) {
-        int[] arr = DataChecker.randomArray(10);
+        int[] arr = DataChecker.randomArray(100000);
         System.out.println("排序前："+Arrays.toString(arr));
+
+        long startTime = System.currentTimeMillis();
+
         insertSort(arr);
+        long endTime = System.currentTimeMillis();
+        System.out.println("耗费时间：" + (endTime - startTime));
+
+
         System.out.println("排序完成：" + Arrays.toString(arr));
         System.out.println(DataChecker.check(arr));
     }

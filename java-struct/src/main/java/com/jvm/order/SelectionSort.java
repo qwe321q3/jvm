@@ -14,9 +14,12 @@ public class SelectionSort {
 
     public static void main(String[] args) {
 
-        int [] arr = DataChecker.randomArray(10);
-        selectionSort(arr);
+        int [] arr = DataChecker.randomArray(100000);
 
+        long startTime = System.currentTimeMillis();
+        selectionSort(arr);
+        long endTime = System.currentTimeMillis();
+        System.out.println("耗费时间：" + (endTime - startTime));
         System.out.println("排序完成："+Arrays.toString(arr));
         System.out.println("排序结果"+DataChecker.check(arr));
     }
@@ -27,7 +30,7 @@ public class SelectionSort {
      * @param arr
      */
     private static void selectionSort(int[]arr){
-        System.out.println("排序前: "+Arrays.toString(arr));
+      //  System.out.println("排序前: "+Arrays.toString(arr));
 
         for (int x = 0 ; x <arr.length; x++) {
             //定义变量保存最小的数据索引
@@ -45,7 +48,7 @@ public class SelectionSort {
                 }
             }
 
-            System.out.println("第"+x+"排序后：" + Arrays.toString(arr));
+           // System.out.println("第"+x+"排序后：" + Arrays.toString(arr));
         }
 
     }
