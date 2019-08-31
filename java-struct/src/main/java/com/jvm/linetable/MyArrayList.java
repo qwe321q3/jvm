@@ -6,7 +6,7 @@ import java.util.Arrays;
  * 模拟AarrayList 动态扩容
  * 1.增加元素时，判断数组长度是否小于或者等于size
  * 2.如果是的话，就需要扩容数组的大小 ，目前扩容策略为旧数组的一半
- * 3.最大的数组长度要小于2的31次方
+ * 3.最大的数组长度要小于2的31次方 //还未做此限制
  * @param <T>
  */
 public class MyArrayList<T> implements List<T>{
