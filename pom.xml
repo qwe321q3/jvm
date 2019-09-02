@@ -10,6 +10,7 @@
         <module>jvm-introduction</module>
         <module>java-struct</module>
         <module>netty</module>
+        <module>rocketmq</module>
     </modules>
 
     <build>
