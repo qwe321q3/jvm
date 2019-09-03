@@ -9,6 +9,8 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 /**
  * Hello world!
  *
+ * 生产者
+ *
  */
 public class Producer
 {
@@ -19,7 +21,7 @@ public class Producer
 
         //设置NameServer地址,此处应改为实际NameServer地址，多个地址之间用；分隔
         //NameServer的地址必须有，但是也可以通过环境变量的方式设置，不一定非得写死在代码里
-        producer.setNamesrvAddr("192.168.31.98:9876");
+        producer.setNamesrvAddr("192.168.140.133:9876");
 
         //调用start()方法启动一个producer实例
         producer.start();
@@ -40,7 +42,7 @@ public class Producer
                 System.out.println(sendResult);
             } catch (Exception e) {
                 e.printStackTrace();
-                Thread.sleep(1000);
+                Thread.sleep(5000);
             }
         }
         //发送完消息之后，调用shutdown()方法关闭producer

@@ -14,11 +14,11 @@ public class Consumer {
     public static void main(String[] args) throws MQClientException {
 
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer("consumerGroup");
-        defaultMQPushConsumer.setNamesrvAddr("192.168.31.98:9876");
+        defaultMQPushConsumer.setNamesrvAddr("192.168.140.133:9876");
         defaultMQPushConsumer.subscribe("RocketTopic", "");
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
 
-        defaultMQPushConsumer.setMessageListener(new MessageListenerConcurrently() {
+        defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
                 MessageExt messageExt = list.get(0);
