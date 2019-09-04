@@ -1,9 +1,5 @@
 package com.jvm.leetcode;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * Add Two Numbers
  * <p>
@@ -31,37 +27,28 @@ public class AddTwoNumbers {
         n6.next = n41;
 
 
-        addTwoNumbers(n2,n5);
+        System.out.println(addTwoNumbers(n2,n5));
 
     }
 
     public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ArrayList<Integer>b1 = new ArrayList();
-        ArrayList<Integer> b2 = new ArrayList();
-        while(l1!=null){
-            b1.add(l1.val);
-            l1 = l1.next;
+        ListNode dummyHead = new ListNode(0);
+        ListNode p = l1, q = l2, curr = dummyHead;
+        int carry = 0;
+        while (p != null || q != null) {
+            int x = (p != null) ? p.val : 0;
+            int y = (q != null) ? q.val : 0;
+            int sum = carry + x + y;
+            carry = sum / 10;
+            curr.next = new ListNode(sum % 10);
+            curr = curr.next;
+            if (p != null) p = p.next;
+            if (q != null) q = q.next;
         }
-
-        while(l2!=null){
-            b2.add(l2.val);
-            l2 = l2.next;
+        if (carry > 0) {
+            curr.next = new ListNode(carry);
         }
-
-        System.out.println(b1);
-        System.out.println(b2);
-        for (int i = 0, len = b1.size(); i < len / 2; i++) {
-            int temp = b1.get(i);
-            b1.set(i,b1.get(len-1-i));
-            b1.set((len - 1-i), temp);
-        }
-
-        System.out.println("翻转之后的数据为："+b1);
-
-        System.out.println(b1);
-        System.out.println(b2);
-        return null;
-
+        return dummyHead.next;
 
     }
 
