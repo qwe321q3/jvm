@@ -84,9 +84,9 @@ public class BinarySortTree {
 
         int[] arr = {4, 2, 5, 7, 1, 6, 9};
 
-        for (int i = 0; i < arr.length; i++) {
-            System.out.print(arr[i] + " ,");
-            binarySortTree.create(arr[i]);
+        for (int i1 : arr) {
+            System.out.print(i1 + " ,");
+            binarySortTree.create(i1);
         }
         System.out.println();
         System.out.println(binarySortTree.root);
