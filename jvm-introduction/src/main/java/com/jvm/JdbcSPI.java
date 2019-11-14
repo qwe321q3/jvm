@@ -1,13 +1,6 @@
 package com.jvm;
 
-import sun.reflect.Reflection;
-
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 public class JdbcSPI {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
