@@ -1,4 +1,4 @@
-package com.jvm;
+package com.jvm.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -23,6 +23,8 @@ public class NettyServer {
     public void run() throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
+        System.err.println("准备运行端口：" + port);
+
         try {
             ServerBootstrap b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
@@ -50,7 +52,7 @@ public class NettyServer {
     }
 
     public static void main(String[] args) throws Exception {
-        int port = 8888;
+        int port = 8000;
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
