@@ -21,7 +21,6 @@ public class QQServerNio {
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.bind(new InetSocketAddress(8000));
         serverSocketChannel.configureBlocking(false);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(20);
 
         List<SocketChannel> socketChannelList = new ArrayList<SocketChannel> ();
         while(true) {
@@ -35,8 +34,13 @@ public class QQServerNio {
             }
 
             for (SocketChannel clientSocket : socketChannelList){
+                ByteBuffer byteBuffer = ByteBuffer.allocate(20);
                 if(clientSocket.read(byteBuffer)!=0) {
-                    System.out.println(byteBuffer.toString());
+                    clientSocket.read(byteBuffer);
+                    byteBuffer.flip();
+                    System.out.println(new java.lang.String(byteBuffer.array()));
+                    ByteBuffer writeByteBuffer = ByteBuffer.wrap("success".getBytes());
+                    clientSocket.write(writeByteBuffer);
                 }
             }
             Thread.sleep(1500);
