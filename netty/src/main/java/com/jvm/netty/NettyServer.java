@@ -21,8 +21,8 @@ public class NettyServer {
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(5); // (1)
+        EventLoopGroup workerGroup = new NioEventLoopGroup(5);
         System.err.println("准备运行端口：" + port);
 
         try {
