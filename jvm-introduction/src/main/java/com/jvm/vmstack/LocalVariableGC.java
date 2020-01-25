@@ -3,6 +3,10 @@ package com.jvm.vmstack;
 /**
  * 本实例用来演示局部变量回收的实例
  * main方法中增加-XX:+PrintGCDetails 用来监控gc日志打印。
+ *
+ *    [GC (System.gc())  （GC前堆空间）14039K->(GC后堆空间) 6744K (502784K)（堆空间总和）, 0.0037792 secs]
+ *    [Full GC (System.gc())  6744K->6534K(502784K), 0.0045643 secs]
+ * 
  */
 public class LocalVariableGC {
 
@@ -11,7 +15,9 @@ public class LocalVariableGC {
      * 因为变量bytes还在引用用这个6m的空间所有这个空间不会被回收。
      * 所以即使我们执行了gc方法，触发fullgc但是堆空间也不会被回收
      *
-     * 6m对象被直接放到的老年代、多大的对象会被直接放置到的老年代？？？
+     * 6m数组被直接放到的老年代、多大的对象会被直接放置到的老年代？？？
+     * 1、是否数组会被jvm直接放入到的老年代？
+     *  // TODO: 2020/1/25  暂未找到答案后续再看
      */
     public void localVar1() {
         byte[] bytes = new byte[6 * 1024 * 1024];
@@ -72,8 +78,10 @@ public class LocalVariableGC {
     }
 
     public static void main(String[] args) {
+        //3947K var1
+        // var2 3947K
         LocalVariableGC localVariableGC = new LocalVariableGC();
-        localVariableGC.localVar5();
+        localVariableGC.localVar1();
     }
 
 
