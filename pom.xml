@@ -11,6 +11,7 @@
         <module>java-struct</module>
         <module>netty</module>
         <module>rocketmq</module>
+        <module>spring-publish</module>
     </modules>
 
     <build>
