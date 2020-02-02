@@ -12,7 +12,7 @@ public class MailServiceImpl {
     @EventListener
     public void sendMail(Order order){
         System.out.print(Thread.currentThread().getName() +"\t ");
-        System.out.println(order);
+        System.out.println("发送邮件"+order);
         throw new RuntimeException("dd");
     }
 

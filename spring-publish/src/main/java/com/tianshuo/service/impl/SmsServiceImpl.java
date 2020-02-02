@@ -12,6 +12,6 @@ public class SmsServiceImpl {
     @EventListener
     public void sendSms(Order order){
         System.out.print(Thread.currentThread().getName() +"\t ");
-        System.out.println(order);
+        System.out.println("发送短信"+order);
     }
 }
