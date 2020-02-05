@@ -23,6 +23,7 @@ public class MyTest8 {
     //不会生成<clinit>方法
     private static final String b = "d";
     private static final int a = 50;
+    private int cc =  22;
 
 
 }
