@@ -18,7 +18,6 @@ public class VolatileTest {
             int i  = 0;
             while (!stop) {
                 i++;
-
             }
 
             System.out.println("stop the Thread");
