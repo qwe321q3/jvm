@@ -14,7 +14,7 @@ public class Container3 {
 
     private List<Integer> list = new ArrayList<>();
 
-    CountDownLatch countDownLatch = new CountDownLatch(1);
+    CountDownLatch countDownLatch = new CountDownLatch(1);//执行门栓数，为0时，门栓打开，同时释放锁
 
     public void add(Integer a) {
         list.add(a);

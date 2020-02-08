@@ -9,12 +9,14 @@ import java.util.List;
  * 使用synchronized 关键字配合
  * wait 线程等待，同时会释放锁。
  * notify  线程通知时，不会释放锁   ---->  重点
+ *
+ *
+ * 重点 多线程过程中，异常一定要处理，否则虚拟机会自动帮你释放锁。
  */
 public class Container2 {
 
     private List<Integer> list = new ArrayList<>();
     Object object = new Object();
-
 
     public void add(Integer a) {
         list.add(a);
@@ -43,6 +45,9 @@ public class Container2 {
 
 
         }).start();
+//         如果object引用变了之后，就相当于2个object对象，各是各的的锁，原子性就会被破坏，所以锁是所在堆的空间的new Object对象上。
+//        container.object = new Object();
+
 
         new Thread(() ->{
             synchronized (container.object) {
@@ -67,7 +72,6 @@ public class Container2 {
             }
 
         }).start();
-
 
     }
 }
