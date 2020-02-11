@@ -1,9 +1,5 @@
-package com.tianshuo.thread;
+package com.tianshuo.thread.d1;
 
-
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A，B，C 3个线程，交替执行5次

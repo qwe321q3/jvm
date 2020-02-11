@@ -1,7 +1,5 @@
-package com.tianshuo.thread;
+package com.tianshuo.thread.d1;
 
-
-import sun.jvm.hotspot.opto.Block;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;

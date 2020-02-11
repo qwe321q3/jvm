@@ -1,4 +1,4 @@
-package com.tianshuo.thread;
+package com.tianshuo.thread.d1;
 
 import java.util.LinkedList;
 import java.util.concurrent.locks.Condition;

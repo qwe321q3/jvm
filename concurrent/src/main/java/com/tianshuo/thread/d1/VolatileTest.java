@@ -1,4 +1,4 @@
-package com.tianshuo.thread;
+package com.tianshuo.thread.d1;
 
 /**
  * 测试变量隔离
