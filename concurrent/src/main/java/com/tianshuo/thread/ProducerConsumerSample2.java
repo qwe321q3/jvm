@@ -24,7 +24,6 @@ public class ProducerConsumerSample2<T> {
     private Condition producer = lock.newCondition();
     private Condition consumer = lock.newCondition();
 
-
     private void get() {
         lock.lock();
         try {
