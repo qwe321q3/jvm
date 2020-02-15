@@ -36,7 +36,6 @@ public class BlockingQueueSample {
         }).start();
         System.out.println("ppppp");
 
-
     }
 
 
