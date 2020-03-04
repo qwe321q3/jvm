@@ -1,6 +1,5 @@
 package com.tianshuo.thread.d2;
 
-import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class BlockingQueueSample {

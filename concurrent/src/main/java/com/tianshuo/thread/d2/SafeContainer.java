@@ -1,10 +1,6 @@
 package com.tianshuo.thread.d2;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**

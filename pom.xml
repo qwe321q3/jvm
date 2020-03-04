@@ -13,6 +13,7 @@
         <module>rocketmq</module>
         <module>spring-publish</module>
         <module>concurrent</module>
+        <module>web-servlet3</module>
     </modules>
 
     <properties>
