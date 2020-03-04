@@ -9,6 +9,8 @@ import java.util.Set;
 /**
  * HandlesTypes 配置感兴趣的class
  *
+ * tomcat 或者jetty 启动时，会支撑ServletContainerInitializer
+ *
  * @author tianshuo
  */
 @HandlesTypes(value = {UserService.class})
