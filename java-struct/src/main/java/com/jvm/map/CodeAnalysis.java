@@ -1,11 +1,25 @@
 package com.jvm.map;
 
+/**
+ * 分析HashMap如果获取一个数的2次幂
+ *
+ * 原理分析：
+ * 一个数的2次幂，二进制表示的时候的，只会存在一个1
+ * 做法：
+ * 把一个数的二进制高位1之后的数全部换成1，然后用这个数减去(这个数-1)
+ * 例子：8
+ * 1000
+ * 1111 - (1111-1) = 1000
+ * 例子：9
+ * 1001
+ * 1111 - (1111-1) = 1000
+ */
 public class CodeAnalysis {
 
     public static void main(String[] args) {
 
         System.out.println(Integer.highestOneBit(15));
-        System.out.println(tableSizeFor(15));
+        System.out.println(tableSizeFor(16));
 
         // 7
         // 0000 0000 0000 0000 0000 0000 0000 1111
@@ -21,6 +35,7 @@ public class CodeAnalysis {
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
+     * 1111+1 = 10000 = 16   一步到位获得等于或者大于这个数据的2的次幂数
      *
      * Returns a power of two size for the given target capacity.
      */
