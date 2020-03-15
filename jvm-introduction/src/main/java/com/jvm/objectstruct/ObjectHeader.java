@@ -9,7 +9,7 @@ import org.openjdk.jol.info.ClassLayout;
  *
  *  对象的大小，刚好要被8整除，如果不够8整除，jvm会把填充的到能够被8整除
  *
- */
+ */;
 public class ObjectHeader {
 
     public static void main(String[] args) {
