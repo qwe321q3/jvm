@@ -1,4 +1,4 @@
-package com.jvm.factory.simple;
+package com.jvm.dp.factory.simple;
 
 /**
  * 简单工程模式 模拟计算器
