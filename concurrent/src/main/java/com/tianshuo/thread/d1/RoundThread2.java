@@ -29,7 +29,7 @@ public class RoundThread2 {
         }
 
     }
-    public void showB(){
+    public synchronized void showB(){
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -44,7 +44,7 @@ public class RoundThread2 {
         }
 
     }
-    public void showC(){
+    public synchronized void showC(){
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
