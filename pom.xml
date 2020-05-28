@@ -15,6 +15,7 @@
         <module>concurrent</module>
         <module>web-servlet3</module>
         <module>designpattern</module>
+        <module>jcommand</module>
     </modules>
 
     <properties>
