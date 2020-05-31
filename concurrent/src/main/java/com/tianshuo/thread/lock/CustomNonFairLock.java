@@ -74,10 +74,8 @@ public class CustomNonFairLock {
     public void lock() {
         //1、使用cas改变锁状态字段，改变成功，代表拿到锁
 
-        System.out.println("lock before: " + this);
 
         if (tryAcquire()) {
-            System.out.println("lock after: " + this);
             System.out.println("线程: " + threadHolder.getName() + " 拿到了锁!");
 
             return;
@@ -87,16 +85,12 @@ public class CustomNonFairLock {
         Thread currentThread = Thread.currentThread();
         threadConcurrentLinkedQueue.add(currentThread);
         for (; ; ) {
-            System.out.println("lock before n: " + this);
 
             if (tryAcquire()) {
                 System.out.println("线程: " + threadHolder.getName() + " 拿到了锁!");
                 threadConcurrentLinkedQueue.poll();
                 return;
             }
-
-
-            System.out.println("lock afler z: " + this);
 
             LockSupport.park(currentThread);
         }
@@ -120,7 +114,7 @@ public class CustomNonFairLock {
                     LockSupport.unpark(head);
                 }
 
-                System.out.println("释放锁成功！");
+                System.out.println("线程："+currentThread.getName()+" 释放锁成功！");
             }
         }
 
