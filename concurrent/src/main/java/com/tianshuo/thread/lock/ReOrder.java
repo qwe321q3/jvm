@@ -6,7 +6,7 @@ package com.tianshuo.thread.lock;
  * 重排序是为了刚好的使用多核CPU，CPU会在对代码语义没有影响的情况下，对代码进行重排序。  使代码在多线程环境中，使代码执行在多线程环境
  * 中看起来像是有序一下。  as-ifself-serial
  */
-public class DeOrder {
+public class ReOrder {
     static int a = 0, b = 0;
     static int x = 0, y = 0;
 
