@@ -35,7 +35,7 @@ public class ReOrder {
             System.out.println("第" + i + "次 : x="+x+" ,y="+y);
 
             if (x == 0 && y == 0) {
-                System.out.println("第" + i + "次 : x=0 ,y=0");
+                System.err.println("第" + i + "次 : x=0 ,y=0");
                 break;
             }
 
