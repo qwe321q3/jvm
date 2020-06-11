@@ -17,6 +17,7 @@
         <module>designpattern</module>
         <module>jcommand</module>
         <module>reflection</module>
+        <module>spring-shell</module>
     </modules>
 
     <properties>
