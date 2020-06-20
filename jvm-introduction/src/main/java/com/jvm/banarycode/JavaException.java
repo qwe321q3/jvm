@@ -8,10 +8,16 @@ import java.net.ServerSocket;
 /**
  * jvm 异常处理
  *
+ * -XX:+TraceClassLoading  开启类加载跟踪
+ * 执行类的main方法时，jvm也会加载这个类
+ *
  */
 
 public class JavaException {
 
+    public JavaException() {
+        System.out.println("构造方法");
+    }
 
     public void test() throws FileNotFoundException,IOException{
 
@@ -31,6 +37,9 @@ public class JavaException {
             System.out.println("处理异常!");
         }
 
+    }
 
+    public static void main(String[] args) {
+        System.out.println(MyTest8.a);
     }
 }

@@ -5,6 +5,8 @@ import java.sql.SQLException;
 public class JdbcSPI {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
+        ClassLoaderPath classLoaderPath = new ClassLoaderPath();
+        System.out.println(classLoaderPath.getClass().getClassLoader());
 
 //        ServiceLoader<Driver> driverServiceLoader = ServiceLoader.load(Driver.class);
 //        Iterator<Driver> iterator = driverServiceLoader.iterator();
@@ -18,15 +20,5 @@ public class JdbcSPI {
 //        System.out.println(ClassLoaderPath.class.getClassLoader());
 //        ClassLoaderPath classLoaderPath = new ClassLoaderPath();
 //        System.out.println(classLoaderPath.getClass().getClassLoader());
-
-
-        System.out.println(ClassLoaderPath.a);
-        System.out.println(ClassLoaderPath.a);
-
-        new ClassLoaderPath();
-
-
-
-
     }
 }

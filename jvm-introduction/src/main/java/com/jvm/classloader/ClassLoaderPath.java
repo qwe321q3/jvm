@@ -8,6 +8,8 @@ public class ClassLoaderPath {
         System.out.println("ClassLoaderPath 初始化");
     }
 
+    private static String str = new String("dd");
+
     public static void main(String[] args) {
         //系统类加载器 BootStrapClassLoader jre/lib
         System.out.println(System.getProperty("sun.boot.class.path"));
@@ -23,7 +25,5 @@ public class ClassLoaderPath {
         System.out.println("_____________________________________");
 
         System.out.println(System.getProperty("java.system.class.loader"));
-
-
     }
 }

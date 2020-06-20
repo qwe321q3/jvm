@@ -10,8 +10,24 @@ package com.jvm.banarycode;
  * initial
  * <p>
  * 如果类中不存在静态成员赋值或者静态块，那么的jvm不会给类生成<clinit> 方法
+ *
+ * 调用类中的静态变量也会触发类的静态块  如Mytest8.a  触发static{}
  */
 public class MyTest8 {
+
+    public MyTest8() {
+        System.out.println(" construct function  mytest8!");
+    }
+
+    public MyTest8(int dd) {
+        this.dd = dd;
+    }
+
+    static{
+        System.out.println("MyTest8 static ");
+    }
+
+    public static int a = 45;
 //
 //    private static String a = "a";
 //    private static int b;
@@ -22,8 +38,8 @@ public class MyTest8 {
 
     //不会生成<clinit>方法
     private static final String b = "d";
-    private static final int a = 50;
-    private int cc =  22;
+    private static final int cc = 50;
+    private int dd =  22;
 
 
 }
