@@ -52,5 +52,7 @@ public class MyClassLoader extends ClassLoader {
         MyClassLoader myClassLoader = new MyClassLoader();
         Class<?> aClass = myClassLoader.loadClass("com.jvm.test.A");
         System.out.println(aClass.getClassLoader());
+        ClassLoader parent = myClassLoader.getParent();
+        System.out.println(parent);
     }
 }
