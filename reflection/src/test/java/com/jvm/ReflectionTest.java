@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import com.jvm.annotation.AutoWired;
 import com.jvm.controller.UserController;
 import com.jvm.model.UserService;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
