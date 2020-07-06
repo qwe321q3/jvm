@@ -29,11 +29,11 @@ public class StringConstantPool {
         //常用a,b,c等是有可能之前就存在在字符串常量池中的
         //hellowyyy这个字符串在中字符串常量池中没有找到，所以的直接返回了堆中hellowyyy的引用
         String a1 = new String("hellow")+new String("yyy");
-        String a2 = "bddda";
+//        String a2 = "hellowyyy";  如果执行此方法时候，就不再a4!=a1 ，执行代码之后，字符串常量池就有了hellowyyy字符串
         String a4 = a1.intern();
 
         //false
-        System.out.println(a2 == a1);
+//        System.out.println(a2 == a1);
         //true
         System.out.println(a4 == a1);
 
