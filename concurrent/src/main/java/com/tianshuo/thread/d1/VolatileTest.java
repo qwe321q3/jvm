@@ -25,9 +25,6 @@ public class VolatileTest {
 //                synchronized (this) {  //加了同步块之后，线程会有一定时间的阻塞，释放锁之后，线程切换，其他线程就有一定几率可以修改主内存的数据。
                     i++;
 //                }
-                //线程在空闲期间也是会更新CPU的高速缓冲区的变量值，但是这个什么时候空闲，这个软件无法控制，要看cpu如果实现的
-                //增加此段打印，不使用volatile关键字，线程也是会被停止的
-//                System.out.println("123123131");
             }
 
             System.out.println("stop the Thread");
