@@ -3,6 +3,7 @@ package com.tianshuo.thread.lock;
 /**
  * ReentrantLock
  * 使用重入锁 实现线程安全
+ * @author tianshuo
  */
 public class MultiThreadLockTest {
 

@@ -15,7 +15,7 @@ public class Consumer {
     public static void main(String[] args) throws MQClientException {
 
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer("bb");
-        defaultMQPushConsumer.setNamesrvAddr("192.168.31.3:9876;192.168.31.4:9876");
+        defaultMQPushConsumer.setNamesrvAddr("192.168.31.98:9876");
         defaultMQPushConsumer.subscribe("RocketTopic", "");
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         /**
@@ -29,7 +29,7 @@ public class Consumer {
          *
          * 如果有10条消息 ，2个消费端  ，那么2个消费端，每人都会消费10条消息
          */
-        defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
+        defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
 
 
         defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
