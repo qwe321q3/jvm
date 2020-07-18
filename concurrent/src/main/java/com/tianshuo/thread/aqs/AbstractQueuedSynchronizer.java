@@ -249,6 +249,11 @@ public abstract class AbstractQueuedSynchronizer
     static final long spinForTimeoutThreshold = 1000L;
 
     /**
+     * 1、自旋，判断尾部节点为空，表示当前队列还未被初始化
+     * 2、new Node ，使用Cas操作让head指向新创建的Node节点，同时尾部节点也执行head
+     * 3、传递过来的Node节点的前驱节点指向新创建的Node，也就是head，然后使用Cas操作，让队列Tail指向传递过来的Node
+     * 然后返回
+     *
      * 节点加入CLH同步队列
      */
     private Node enq(final Node node) {
@@ -270,6 +275,11 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     *
+     * 1、创建一个节点，节点的线程为当前线程
+     * 2、判断队列是否初始化，如果已经初始化，使用Cas操作把当前节点加入到队列的尾部
+     * 3、如果当前队列未被初始化，创建空属性head，同事把当前节点加入到head之后
+     *
      * Creates and enqueues node for current thread and given mode.
      *
      * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
@@ -444,6 +454,8 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     *
+     *
      * Checks and updates status for a node that failed to acquire.
      * Returns true if thread should block. This is the main signal
      * control in all acquire loops.  Requires that pred == node.prev.
@@ -453,15 +465,19 @@ public abstract class AbstractQueuedSynchronizer
      * @return {@code true} if thread should block
      */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+        /**
+         * 判断前驱节点的等待状态，如果状态signal，直接返回true
+         */
         int ws = pred.waitStatus;
         if (ws == Node.SIGNAL)
             /*
-             * 若前驱结点的状态是SIGNAL，意味着当前结点可以被安全地park
+             * 若前驱结点的状态是SIGNAL（-1），意味着当前结点可以被安全地park
              */
             return true;
         if (ws > 0) {
             /*
-             * 前驱节点状态如果被取消状态，将被移除出队列
+             * 循环判断所有的前驱节点的等待状态，如果是1（取消，或者线程被中断的状态），将此节点移除队列
+             * 然后将当前节点，加入到的剩下的节点的后边
              */
             do {
                 node.prev = pred = pred.prev;
@@ -469,7 +485,7 @@ public abstract class AbstractQueuedSynchronizer
             pred.next = node;
         } else {
             /*
-             * 当前驱节点waitStatus为 0 or PROPAGATE状态时
+             * 当前驱节点waitStatus为 0 or PROPAGATE（传播状态）状态时
              * 将其设置为SIGNAL状态，然后当前结点才可以可以被安全地park
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
@@ -510,15 +526,21 @@ public abstract class AbstractQueuedSynchronizer
         try {
             boolean interrupted = false;
             /**
+             * 自旋判断当前的节点的前驱节点是否是head
              * 如果当前节点的前置节点是的head的话，说明队列只有他一个人
-             * 高并发的场景下有可能这个的，第一个拿到说的线程已经的释放了锁，此时的可以再尝试是否可以获取到锁
+             * 高并发的场景下，有可能这个的第一个拿到锁的线程已经的释放了锁，此时的可以再尝试是否可以获取到锁
              */
             for (;;) {//死循环
-                final Node p = node.predecessor();//找到当前结点的前驱结点
-                //如果前驱结点是头结点，才tryAcquire，其他结点是没有机会tryAcquire的。
-                //因为在高并发的场景下有一定的可能，此时第一个线程已经释放了锁
+                //找到当前结点的前驱结点
+                final Node p = node.predecessor();
+                /**
+                 * 1、如果前驱结点是头结点，才tryAcquire，其他结点是没有机会tryAcquire的。
+                 * 2、因为在高并发的场景下有一定的可能，此时第一个线程已经释放了锁
+                 *
+                 */
                 if (p == head && tryAcquire(arg)) {
-                    setHead(node);//获取同步状态成功，将当前结点设置为头结点。
+                    //获取锁成功，让head节点的指针指向当前节点，同时清空thread属性，及prev属性
+                    setHead(node);
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
