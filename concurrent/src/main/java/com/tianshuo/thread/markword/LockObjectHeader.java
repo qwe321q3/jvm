@@ -1,6 +1,5 @@
 package com.tianshuo.thread.markword;
 
-import com.sun.tools.jdi.LockObject;
 import org.openjdk.jol.info.ClassLayout;
 
 /**
