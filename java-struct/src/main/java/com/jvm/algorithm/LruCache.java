@@ -104,7 +104,11 @@ public class LruCache<K, V> {
      * @param node
      */
     private void remove(LruNode<K, V> node) {
-        node.prev.next = node.next;
+        if (node !=head){
+            node.next.prev = node.prev;
+        }else{
+            head = head.next;
+        }
         if (null!=node.next) {
             node.next.prev = node.prev;
         }
@@ -270,7 +274,7 @@ public class LruCache<K, V> {
         lruCache.put("c","3");
         print(lruCache);
         System.out.println("");
-        lruCache.remove("b");
+        lruCache.remove("c");
         System.out.println(" head : "+lruCache.head.key+" - "+lruCache.head.value +" 缓存长度："+lruCache.size);
         System.out.println(" cache : "+lruCache.lruMap);
 
