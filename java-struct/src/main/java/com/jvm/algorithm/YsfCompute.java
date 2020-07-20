@@ -2,7 +2,7 @@ package com.jvm.algorithm;
 
 /**
  * @Classname YsfCompute
- * @Description 约瑟夫算法  规定数据n个数据，报数到m时，退出，直到只剩下一个人.
+ * @Description 约瑟夫算法 基于双向循环链表 规定数据n个数据，报数到m时，退出，直到只剩下一个人.
  * @Date 2020/7/19 0019 15:10
  * @Created by Administrator
  */
@@ -28,13 +28,13 @@ public class YsfCompute<E> {
 
     }
 
-    public Node<E> begion(int count,int threshold){
+    public Node<E> begion(int count, int threshold) {
         for (int i = 1; i <= count; i++) {
             add(i);
         }
 
 
-        return  kill(threshold);
+        return kill(threshold);
     }
 
 
@@ -71,7 +71,7 @@ public class YsfCompute<E> {
         while (null != node) {
 
             if (threshold == i) {
-                System.out.println("要被删除的节点："+node);
+                System.out.println("要被删除的节点：" + node);
 
                 remove(node);
                 i = 1;
@@ -96,8 +96,8 @@ public class YsfCompute<E> {
      * @param node 参数为要删除的节点的上一个节点
      */
     private void remove(Node<E> node) {
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
     }
 
     private static class Node<E> {
