@@ -37,6 +37,9 @@ public class OptionCompute {
                 flagStack.push(chars[i]);
             }
 
+            /**
+             * 栈底元素为左边的操作数
+             */
             if (flag&&i == xindex) {
                 int num1 = numberStack.pop();
                 char c = (char) flagStack.pop();
