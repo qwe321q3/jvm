@@ -28,8 +28,8 @@ public class MyStack<E> {
 
     public E pop() {
 
-     //   int len = size-1<0?0:size-1;
-        int len = size -1;
+        int len = size-1<0?0:size-1;
+//        int len = size -1;
 
         E e = peak();
 
@@ -81,7 +81,7 @@ public class MyStack<E> {
 
 
     public int size() {
-        return objectElement.length;
+        return size;
     }
 
     public boolean isEmpty() {
@@ -99,6 +99,10 @@ public class MyStack<E> {
        while(myStack.peak()!=null){
            System.out.println(myStack.pop());
        }
+
+        System.out.println(myStack.size());
+        System.out.println(myStack.isEmpty());
+
 
 
     }
