@@ -294,7 +294,7 @@ public abstract class AbstractQueuedSynchronizer
         if (pred != null) {
             // 2.2 将当前节点尾插入的方式
             node.prev = pred;
-            // 2.3 CAS将节点插入同步队列的尾部
+            // 2.3 CAS将节点插入同步队列的尾部  与 hashQueueProcessors 里边的  (s=h.next)==null呼应
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
@@ -528,7 +528,7 @@ public abstract class AbstractQueuedSynchronizer
             /**
              * 自旋判断当前的节点的前驱节点是否是head
              * 如果当前节点的前置节点是的head的话，说明队列只有他一个人
-             * 高并发的场景下，有可能这个的第一个拿到锁的线程已经的释放了锁，此时的可以再尝试是否可以获取到锁
+             * 高并发的场景下，有可能这个的第一个拿到锁的线程已经的释放了锁，此时可以再尝试是否可以获取到锁
              */
             for (;;) {//死循环
                 //找到当前结点的前驱结点
@@ -1116,7 +1116,7 @@ public abstract class AbstractQueuedSynchronizer
         /**
          * 下面提到的所有不需要排队，并不是字面意义，我实在想不出什么词语来描述这个“不需要排队”；不需要排队有两种情况
          * 一：队列没有初始化，不需要排队，不需要排队，不需要排队；直接去加锁，但是可能会失败；为什么会失败呢？
-         * 假设两个线程同时来lock，都看到队列没有初始化，都认为不需要排队，都去进行CAS修改计数器；有一个必然失败
+         * 假设两个线程同时来lock，都看到队吗列没有初始化，都认为不需要排队，都去进行CAS修改计数器；有一个必然失败
          * 比如t1先拿到锁，那么另外一个t2则会CAS失败，这个时候t2就会去初始化队列，并排队
          *
          * 二：队列被初始化了，但是tc过来加锁，发觉队列当中第一个排队的就是自己；比如重入；
@@ -1199,6 +1199,13 @@ public abstract class AbstractQueuedSynchronizer
          *-------------如果持有锁的线程释放了锁，那么我能成功上锁
          *
          **/
+
+
+        //1、如果h!=t == false 此时队列没有初始化，直接去获取锁
+        //2、如果h!=t == true ,接着判断s == null == false 此时队列中的不止有一个节点 ，接着判断当前线程是不是排在对头的节点s.thread != Thread.currentThread()
+        // 如果是的话，也不需要排队，如果不是就去排队
+        //3、如果h!=t && (s=h.next) == null 可能是为了防止线程在执行cas设置队尾操作时还未完成时，刚好有其他线程进来判断是否需要排队。
+
         return h != t &&
                 ((s = h.next) == null || s.thread != Thread.currentThread());
     }

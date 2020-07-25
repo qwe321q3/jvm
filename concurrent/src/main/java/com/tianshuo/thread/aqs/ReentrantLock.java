@@ -242,11 +242,15 @@ public class ReentrantLock implements Lock, java.io.Serializable {
         protected final boolean tryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
             int c = getState();
+            /**
+             * 1、先判断锁是否可以被占用
+             * 2、如果判断锁可以被占用个，继续判断是否需要去排队
+             */
             if (c == 0) {
                 /**
-                 * 判断队列是否已经初始化了
-                 * 如果没有初始化，直接进行Cas加锁操作
-                 * 同时设置的独占线程为当前线程
+                 * 判断队列是否初始化，判断队列中是否只有一个元素或者这个占用的索引的线程，是否当前线程
+                 * 简而言之，判断当前线程是否需要排队，如果如果不需要排队，这直接Cas加锁操作
+                 * 如果加锁成功，把当前线程设置为已经占用锁的线程，如果加锁失败去排队。
                  */
                 if (!hasQueuedPredecessors() &&
                         compareAndSetState(0, acquires)) {
