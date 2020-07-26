@@ -321,13 +321,17 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     *  判断node的信号量，如果信号量小于0，Cas更新为0
+     *  如果如果不小于0，判断当前节点后继节点是否为null或者信号量为0，如果为0，设置null，移除
+     *  然后从tail开始向前找，如果找到信号量小于0的node节点，然后解除阻塞。
      *
      */
     private void unparkSuccessor(Node node) {
         //获取wait状态
         int ws = node.waitStatus;
         if (ws < 0)
-            compareAndSetWaitStatus(node, ws, 0);// 将等待状态waitStatus设置为初始值0
+            // 将等待状态waitStatus设置为初始值0
+            compareAndSetWaitStatus(node, ws, 0);
 
         /**
          * 若后继结点为空，或状态为CANCEL（已失效），则从后尾部往前遍历找到最前的一个处于正常阻塞状态的结点
@@ -455,6 +459,13 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      *
+     * 检查和更新前驱节点的信号量
+     *    a、如果前驱节点的信号量==-1 如果是直接返回true
+     *    b、如果>0 前驱节点是被中断或者被取消的状态，此时从此节点开始向前开始找信号量<=0的节点
+     *    ，(从队列中移除所有中断或者被取消的节点)，  然后把当前挂载这样的节点的后边，返回false
+     *    c、如果<0 使用Cas操作把这个前驱节点的状态修改为-1，Cas操作成功会返回true，操作失败之后返回false
+     *
+     *  如果返回false之后，会继续自旋，返回true之后，线程才能被安全park
      *
      * Checks and updates status for a node that failed to acquire.
      * Returns true if thread should block. This is the main signal
@@ -494,6 +505,7 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     * 中断当前线程  重新设置中断状态
      * Convenience method to interrupt current thread.
      */
     static void selfInterrupt() {
@@ -506,6 +518,7 @@ public abstract class AbstractQueuedSynchronizer
      */
     private final boolean parkAndCheckInterrupt() {
         LockSupport.park(this);//阻塞
+        //测试是否中断，同时重置中断状态为false
         return Thread.interrupted();
     }
 
@@ -520,6 +533,14 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * 已经在队列当中的Thread节点，准备阻塞等待获取锁
+     *
+     * 1、只有当线程的前驱节点为head时，线程才可以尝试获取锁
+     *
+     * 2、否则的话，需要判断前驱节点的状态是否为-1，直接返回true ，执行阻塞当前线程
+     * 如果大于-1的，需要向前寻找知道找一个前驱节点为-1的节点，然后让这个前驱节点的后继指向自己，return false 继续自旋尝试
+     * 如果小于-1，使用Cas操作把前驱节点信号量设置为-1 ，return false; 继续自旋
+     *
+     *
      */
     final boolean acquireQueued(final Node node, int arg) {
         boolean failed = true;
@@ -547,13 +568,14 @@ public abstract class AbstractQueuedSynchronizer
                 }
                 /**
                  * 如果前驱节点不是Head，通过shouldParkAfterFailedAcquire判断是否应该阻塞
-                 * 前驱节点信号量为-1，当前线程可以安全被parkAndCheckInterrupt用来阻塞线程
+                 * 必须前驱节点信号量为-1，当前线程才可以安全被parkAndCheckInterrupt用来阻塞线程
                  */
                 if (shouldParkAfterFailedAcquire(p, node) &&
                         parkAndCheckInterrupt())
                     interrupted = true;
             }
         } finally {
+            //线程stop之后（强制停止），会出现异常，此时会执行此方法。
             if (failed)
                 cancelAcquire(node);
         }
@@ -844,6 +866,9 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     *
+     * 尝试获取的获取锁，获取锁失败，阻塞当前线程，同时中断此线程。
+     *
      * Acquires in exclusive mode, ignoring interrupts.  Implemented
      * by invoking at least once {@link #tryAcquire},
      * returning on success.  Otherwise the thread is queued, possibly
@@ -912,6 +937,8 @@ public abstract class AbstractQueuedSynchronizer
      * 释放独占模式持有的锁
      */
     public final boolean release(int arg) {
+        //如果锁已经释放完成
+        //如果head不为null并且head的信号量不等于0，唤醒后继节点
         if (tryRelease(arg)) {//释放一次锁
             Node h = head;
             if (h != null && h.waitStatus != 0)
@@ -1106,105 +1133,20 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
-     * 判断当前节点是否有前驱节点
+     * 判断队列是否初始化,未初始化，尝试加锁
+     * 如果已经初始化，判断队列中的第二个节点是否是自己，如果不是自己，去排队，如果是自己如尝试加锁
+     * 如果队列已经初始化，对列中有第二节点，但是第二个节点还没有完全插入，那肯定不是自己，直接去排队
      */
     public final boolean hasQueuedPredecessors() {
         // Read fields in reverse initialization order
         Node t = tail;
         Node h = head;
         Node s;
-        /**
-         * 下面提到的所有不需要排队，并不是字面意义，我实在想不出什么词语来描述这个“不需要排队”；不需要排队有两种情况
-         * 一：队列没有初始化，不需要排队，不需要排队，不需要排队；直接去加锁，但是可能会失败；为什么会失败呢？
-         * 假设两个线程同时来lock，都看到队吗列没有初始化，都认为不需要排队，都去进行CAS修改计数器；有一个必然失败
-         * 比如t1先拿到锁，那么另外一个t2则会CAS失败，这个时候t2就会去初始化队列，并排队
-         *
-         * 二：队列被初始化了，但是tc过来加锁，发觉队列当中第一个排队的就是自己；比如重入；
-         * 那么什么叫做第一个排队的呢？下面解释了，很重要往下看；
-         * 这个时候他也不需要排队，不需要排队，不需要排队；为什么不需要排对？
-         * 因为队列当中第一个排队的线程他会去尝试获取一下锁，因为有可能这个时候持有锁锁的那个线程可能释放了锁；
-         * 如果释放了就直接获取锁执行。但是如果没有释放他就会去排队，
-         * 所以这里的不需要排队，不是真的不需要排队
-         *
-         * h != t 判断首不等于尾这里要分三种情况
-         * 1、队列没有初始化，也就是第一个线程tf来加锁的时候那么这个时候队列没有初始化，
-         * h和t都是null，那么这个时候判断不等于则不成立（false）那么由于是&&运算后面的就不会走了，
-         * 直接返回false表示不需要排队，而前面又是取反（if (!hasQueuedPredecessors()），所以会直接去cas加锁。
-         * ----------第一种情况总结：队列没有初始化没人排队，那么我直接不排队，直接上锁；合情合理、有理有据令人信服；
-         * 好比你去火车站买票，服务员都闲的蛋疼，整个队列都没有形成；没人排队，你直接过去交钱拿票
-         *
-         * 2、队列被初始化了，后面会分析队列初始化的流程，如果队列被初始化那么h!=t则成立；（不绝对，还有第3中情况）
-         * h != t 返回true；但是由于是&&运算，故而代码还需要进行后续的判断
-         * （有人可能会疑问，比如队列初始化了；里面只有一个数据，那么头和尾都是同一个怎么会成立呢？
-         * 其实这是第3种情况--对头等于对尾；但是这里先不考虑，我们假设现在队列里面有大于1个数据）
-         * 大于1个数据则成立;继续判断把h.next赋值给s；s有是对头的下一个Node，
-         * 这个时候s则表示他是队列当中参与排队的线程而且是排在最前面的；
-         * 为什么是s最前面不是h嘛？诚然h是队列里面的第一个，但是不是排队的第一个；下文有详细解释
-         * 因为h也就是对头对应的Node对象或者线程他是持有锁的，但是不参与排队；
-         * 这个很好理解，比如你去买车票，你如果是第一个这个时候售票员已经在给你服务了，你不算排队，你后面的才算排队；
-         * 队列里面的h是不参与排队的这点一定要明白；参考下面关于队列初始化的解释；
-         * 因为h要么是虚拟出来的节点，要么是持有锁的节点；什么时候是虚拟的呢？什么时候是持有锁的节点呢？下文分析
-         * 然后判断s是否等于空，其实就是判断队列里面是否只有一个数据；
-         * 假设队列大于1个，那么肯定不成立（s==null---->false），因为大于一个Node的时候h.next肯定不为空；
-         * 由()；于是||运算如果返回false，还要判断s.thread != Thread.currentThread这里又分为两种情况
-         *        2.1 s.thread != Thread.currentThread() 返回true，就是当前线程不等于在排队的第一个线程s；
-         *              那么这个时候整体结果就是h!=t：true; （s==null false || s.thread != Thread.currentThread() true  最后true）
-         *              结果： true && true 方法最终放回true，所以需要去排队
-         *              其实这样符合情理，试想一下买火车票，队列不为空，有人在排队；
-         *              而且第一个排队的人和现在来参与竞争的人不是同一个，那么你就乖乖去排队
-         *        2.2 s.thread != Thread.currentThread() 返回false 表示当前来参与竞争锁的线程和第一个排队的线程是同一个线程
-         *             这个时候整体结果就是h!=t---->true; （s==null false || s.thread != Thread.currentThread() false-----> 最后false）
-         *            结果：true && false 方法最终放回false，所以不需要去排队
-         *            不需要排队则调用 compareAndSetState(0, acquires) 去改变计数器尝试上锁；
-         *            这里又分为两种情况（日了狗了这一行代码；有同学课后反应说子路老师老师老是说这个AQS难，
-         *            你现在仔细看看这一行代码的意义，真的不简单的）
-         *             2.2.1  第一种情况加锁成功？有人会问为什么会成功啊，如这个时候h也就是持有锁的那个线程执行完了
-         *                      释放锁了，那么肯定成功啊；成功则执行 setExclusiveOwnerThread(current); 然后返回true 自己看代码
-         *             2.2.2  第二种情况加锁失败？有人会问为什么会失败啊。假如这个时候h也就是持有锁的那个线程没执行完
-         *                       没释放锁，那么肯定失败啊；失败则直接返回false，不会进else if（else if是相对于 if (c == 0)的）
-         *                      那么如果失败怎么办呢？后面分析；
-         *
-         *----------第二种情况总结，如果队列被初始化了，而且至少有一个人在排队那么自己也去排队；但是有个插曲；
-         * ----------他会去看看那个第一个排队的人是不是自己，如果是自己那么他就去尝试加锁；尝试看看锁有没有释放
-         *----------也合情合理，好比你去买票，如果有人排队，那么你乖乖排队，但是你会去看第一个排队的人是不是你女朋友；
-         *----------如果是你女朋友就相当于是你自己（这里实在想不出现实世界关于重入的例子，只能用男女朋友来替代）；
-         * --------- 你就叫你女朋友看看售票员有没有搞完，有没有轮到你女朋友，因为你女朋友是第一个排队的
-         * 疑问：比如如果在在排队，那么他是park状态，如果是park状态，自己怎么还可能重入啊。
-         * 希望有同学可以想出来为什么和我讨论一下，作为一个菜逼，希望有人教教我
-         *
-         *
-         * 3、队列被初始化了，但是里面只有一个数据；什么情况下才会出现这种情况呢？ts加锁的时候里面就只有一个数据？
-         * 其实不是，因为队列初始化的时候会虚拟一个h作为头结点，tc=ts作为第一个排队的节点；tf为持有锁的节点
-         * 为什么这么做呢？因为AQS认为h永远是不排队的，假设你不虚拟节点出来那么ts就是h，
-         *  而ts其实需要排队的，因为这个时候tf可能没有执行完，还持有着锁，ts得不到锁，故而他需要排队；
-         * 那么为什么要虚拟为什么ts不直接排在tf之后呢，上面已经时说明白了，tf来上锁的时候队列都没有，他不进队列，
-         * 故而ts无法排在tf之后，只能虚拟一个thread=null的节点出来（Node对象当中的thread为null）；
-         * 那么问题来了；究竟什么时候会出现队列当中只有一个数据呢？假设原队列里面有5个人在排队，当前面4个都执行完了
-         * 轮到第五个线程得到锁的时候；他会把自己设置成为头部，而尾部又没有，故而队列当中只有一个h就是第五个
-         * 至于为什么需要把自己设置成头部；其实已经解释了，因为这个时候五个线程已经不排队了，他拿到锁了；
-         * 所以他不参与排队，故而需要设置成为h；即头部；所以这个时间内，队列当中只有一个节点
-         * 关于加锁成功后把自己设置成为头部的源码，后面会解析到；继续第三种情况的代码分析
-         * 记得这个时候队列已经初始化了，但是只有一个数据，并且这个数据所代表的线程是持有锁
-         * h != t false 由于后面是&&运算，故而返回false可以不参与运算，整个方法返回false；不需要排队
-         *
-         *
-         *-------------第三种情况总结：如果队列当中只有一个节点，而这种情况我们分析了，
-         *-------------这个节点就是当前持有锁的那个节点，故而我不需要排队，进行cas；尝试加锁
-         *-------------这是AQS的设计原理，他会判断你入队之前，队列里面有没有人排队；
-         *-------------有没有人排队分两种情况；队列没有初始化，不需要排队
-         *--------------队列初始化了，按时只有一个节点，也是没人排队，自己先也不排队
-         *--------------只要认定自己不需要排队，则先尝试加锁；加锁失败之后再排队；
-         *--------------再一次解释了不需要排队这个词的歧义性
-         *-------------如果加锁失败了，在去park，下文有详细解释这样设计源码和原因
-         *-------------如果持有锁的线程释放了锁，那么我能成功上锁
-         *
-         **/
-
 
         //1、如果h!=t == false 此时队列没有初始化，直接去获取锁
         //2、如果h!=t == true ,接着判断s == null == false 此时队列中的不止有一个节点 ，接着判断当前线程是不是排在对头的节点s.thread != Thread.currentThread()
         // 如果是的话，也不需要排队，如果不是就去排队
-        //3、如果h!=t && (s=h.next) == null 可能是为了防止线程在执行cas设置队尾操作时还未完成时，刚好有其他线程进来判断是否需要排队。
+        //3、如果h!=t && (s=h.next) == null 但是线程在执行cas设置队尾操作时还未完成时,肯定不是自己，直接去排队
 
         return h != t &&
                 ((s = h.next) == null || s.thread != Thread.currentThread());

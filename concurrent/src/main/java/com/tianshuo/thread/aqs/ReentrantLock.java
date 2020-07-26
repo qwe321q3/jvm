@@ -139,9 +139,14 @@ public class ReentrantLock implements Lock, java.io.Serializable {
         }
 
         /**
-         * 释放锁
+         *
+         * 1、判断当前线程是否是占用锁的线程，如果不是直接抛出异常
+         * 2、如果是释放release参数对应的锁，如果c为0说明锁已经是否完成了，需要设置free标识为true，标识所已经释放了
+         * 同时把占用锁的线程变量设置为null ，设置锁次数状态state为0
+         * 3、如果释放release参数对应值的锁之后，C！=0，说明这个锁是被重入的，还需要继续释放锁
          */
         protected final boolean tryRelease(int releases) {
+
             int c = getState() - releases;
             if (Thread.currentThread() != getExclusiveOwnerThread())
                 throw new IllegalMonitorStateException();
