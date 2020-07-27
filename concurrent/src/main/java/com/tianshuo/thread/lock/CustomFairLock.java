@@ -101,14 +101,14 @@ public class CustomFairLock {
         if (!acquire(arg) && enqueue()) {
             Thread thread = threadConcurrentLinkedQueue.peek();
             System.out.println("tryAcquire队列数据:"+threadConcurrentLinkedQueue);
-
+            Thread currentThread = Thread.currentThread();
             //循环获取锁
             for (; ; ) {
-                if(thread!=null) {
+                if(thread!=null/*&&thread==currentThread*/) {
                     System.out.println(" thread: " + thread + "  尝试获取锁!");
                     //判断再次判断是否可以获得锁。如果获取不到锁就park
                     if (compareAndSweepState(0, arg)) {
-                        Thread currentThread = Thread.currentThread();
+
                         setExclusiveThreadHolder(currentThread);
                         threadConcurrentLinkedQueue.remove(currentThread);
 
@@ -117,7 +117,9 @@ public class CustomFairLock {
                         System.out.println("-- thread " + thread + "--被阻塞");
                         LockSupport.park();
                     }
-                }
+                }/*else{
+                    LockSupport.park();
+                }*/
             }
         }
 
