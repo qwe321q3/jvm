@@ -260,12 +260,13 @@ public abstract class AbstractQueuedSynchronizer
         for (;;) {
             Node t = tail;
             if (t == null) { // Must initialize
-                //队列为空需要初始化，创建空的头节点
+                //队列为空需要初始化，创建空的头节点 head = new Node();
                 if (compareAndSetHead(new Node()))
                     tail = head;
             } else {
+                //当前的节点前驱节点 = tail ；
                 node.prev = t;
-                //set尾部节点
+                //set尾部节点   tail = node;
                 if (compareAndSetTail(t, node)) {//当前节点置为尾部
                     t.next = node; //前驱节点的next指针指向当前节点
                     return t;
