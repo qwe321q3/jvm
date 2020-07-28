@@ -111,9 +111,6 @@ public class CustomFairLock {
                         threadConcurrentLinkedQueue.remove(currentThread);
 
                         return true;
-                    } else {//未获取到锁park
-//                        System.out.println("-- thread " + thread + "--被阻塞");
-                        LockSupport.park();
                     }
                 } else {
                     LockSupport.park();
