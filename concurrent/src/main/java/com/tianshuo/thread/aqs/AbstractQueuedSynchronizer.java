@@ -436,12 +436,17 @@ public abstract class AbstractQueuedSynchronizer
         node.waitStatus = Node.CANCELLED;
 
         // If we are the tail, remove ourselves.
+        //如果节点是尾结点，直接用cas方式移除，同时把tail指针指向pred
         if (node == tail && compareAndSetTail(node, pred)) {
+            //使用方式pred的next节点设置为null
             compareAndSetNext(pred, predNext, null);
         } else {
             // If successor needs signal, try to set pred's next-link
             // so it will get one. Otherwise wake it up to propagate.
             int ws;
+            //1、如果pred接待不是头结点，同时的他的信号量是-1或者<=能用cas设置为-1并且pred的线程不为空
+            //2、此时获取他的下个节点，如果下个节点不为空并且信号量小于等于0
+            //3、使用cas操作吧，把pred的下个节点设置为node的next节点
             if (pred != head &&
                     ((ws = pred.waitStatus) == Node.SIGNAL ||
                             (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
@@ -450,6 +455,7 @@ public abstract class AbstractQueuedSynchronizer
                 if (next != null && next.waitStatus <= 0)
                     compareAndSetNext(pred, predNext, next);
             } else {
+                //如果pred节点是head节点，直接唤醒下个一个节点
                 unparkSuccessor(node);
             }
 
