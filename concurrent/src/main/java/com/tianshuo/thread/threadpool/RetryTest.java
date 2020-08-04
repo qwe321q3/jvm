@@ -1,8 +1,9 @@
 package com.tianshuo.thread.threadpool;
 
 /**
+ * @author tianshuo
  * @Classname RetryTest
- * @Description TODO
+ * @Description 新的循环跳出方法类似goto
  * @Date 2020/8/1 0001 22:57
  * @Created by Administrator
  */

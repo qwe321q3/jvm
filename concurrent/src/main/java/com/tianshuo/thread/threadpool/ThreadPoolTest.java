@@ -10,13 +10,15 @@ import java.util.concurrent.*;
  */
 public class ThreadPoolTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         ExecutorService executorService =new ThreadPoolExecutor(5, 7,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>());
 
         for (int i = 0; i < 100; i++) {
-            executorService.execute(new Thread1());
+//            executorService.execute(new Thread1());
+            Future<String> str = executorService.submit(new Thread3());
+            System.out.println(str.get());
         }
 
         executorService.shutdown();
