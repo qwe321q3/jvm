@@ -1252,6 +1252,8 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     * 1、从尾部往头部查找，找到匹配的元素之后返回true，退出循环
+     * 2、当上级节点为null是退出循环
      * Returns true if node is on sync queue by searching backwards from tail.
      * Called only when needed by isOnSyncQueue.
      * @return true if present
@@ -1296,6 +1298,10 @@ public abstract class AbstractQueuedSynchronizer
      * @return true if cancelled before the node was signalled
      */
     final boolean transferAfterCancelledWait(Node node) {
+        /**
+         * 把等待状态设置为初始化状态，然后加入CLH队列，如果Cas修改的状态失败
+         * 判断节点是不是已经在同步队列中了
+         */
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
             enq(node);
             return true;
