@@ -8,10 +8,25 @@ import org.openjdk.jol.info.ClassLayout;
  * @author tianshuo
  */
 public class LockObjectHeader {
+    static Object a = new Object();
+
 
     public static void main(String[] args) throws InterruptedException {
 
-        Object a = new Object();
+
+        String layout = ClassLayout.parseInstance(a).toPrintable();
+
+        System.out.println(layout);
+
+        System.out.println("------------------");
+
+        Thread.sleep(5000);
+
+
+        String layout2 = ClassLayout.parseInstance(a).toPrintable();
+
+        System.out.println(layout2);
+
         /**
          * 轻量级锁  000 轻量级锁
          */
