@@ -1275,6 +1275,12 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * 将节点从条件队列当中移动到同步队列当中，等待获取锁
+     *
+     * 1、如果把Node.CONDITION 改为初始化状态0失败，直接返回false
+     * 2、入队成功，返回前驱节点
+     * 如果前驱节点ws>0及是cancel状态，或者修改前驱节点的状态为-1失败，
+     * 此时直接唤醒当前线程。
+     * 然后返回true
      */
     final boolean transferForSignal(Node node) {
         /*
@@ -1448,6 +1454,8 @@ public abstract class AbstractQueuedSynchronizer
 
         /**
          * 发信号，通知遍历条件队列当中的节点转移到同步队列当中，准备排队获取锁
+         * 从队列的firstWaiter开始遍历，如果节点转换为signal成功并且入队成功，停止循环
+         * 否则入队失败，并且是下个节点不为空，则继续循环直接其中一个节点设置signal成功并且入队成功，或者等待队列为空
          */
         private void doSignal(Node first) {
             do {
