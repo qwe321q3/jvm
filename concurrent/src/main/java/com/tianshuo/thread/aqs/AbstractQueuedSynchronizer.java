@@ -335,8 +335,9 @@ public abstract class AbstractQueuedSynchronizer
             compareAndSetWaitStatus(node, ws, 0);
 
         /**
-         * 若后继结点为空，或状态为CANCEL（已失效），则从后尾部往前遍历找到最前的一个处于正常阻塞状态的结点
-         * 进行唤醒
+         * 若后继结点为空，或状态为CANCEL（已失效），
+         * 则从后尾部往前遍历找到最前的一个处于正常阻塞状态的结点唤醒
+         *
          */
         Node s = node.next;
         if (s == null || s.waitStatus > 0) {
@@ -1244,7 +1245,7 @@ public abstract class AbstractQueuedSynchronizer
         //注：同步队列是有头节点的，而条件队列没有
         if (node.waitStatus == Node.CONDITION || node.prev == null)
             return false;
-        //快速判断2：next字段只有同步队列才会使用，条件队列中使用的是nextWaiter字段
+        //快速判断2：next字段只有同步队列才会使用，条件队列中使用的是ne    qwertuoip[]\xtWaiter字段
         if (node.next != null) // If has successor, it must be on queue
             return true;
         //上面如果无法判断则进入复杂判断
@@ -1252,6 +1253,9 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     * 只能从尾部开始循环，因为head节点一定为空，
+     * 如果从头判断很大概率会死循环，因为tail节点很大概率不为空，只有当队列只有一个元素时，此时head==tail==null，条件太苛刻
+     * 无法作为自旋停止条件
      * 1、从尾部往头部查找，找到匹配的元素之后返回true，退出循环
      * 2、当上级节点为null是退出循环
      * Returns true if node is on sync queue by searching backwards from tail.
@@ -1419,20 +1423,25 @@ public abstract class AbstractQueuedSynchronizer
          * 2.条件队列是在获取锁之后，也就是临界区进行操作，因此很多地方不用考虑并发
          */
         private Node addConditionWaiter() {
+            //当第一次进入此方法时，lastWaiter和firstWaiter都是null
             Node t = lastWaiter;
             //如果最后一个节点被取消，则删除队列中被取消的节点
             //至于为啥是最后一个节点后面会分析
             if (t != null && t.waitStatus != Node.CONDITION) {
                 //删除所有被取消的节点
                 unlinkCancelledWaiters();
+                //t有可能为空
                 t = lastWaiter;
             }
             //创建一个类型为CONDITION的节点并加入队列，由于在临界区，所以这里不用并发控制
             Node node = new Node(Thread.currentThread(), Node.CONDITION);
+            //如果t为空，则firstWaiter为新创建的node节点。
             if (t == null)
                 firstWaiter = node;
             else
+                //如果最后一个节点不为空，把当前节点加入队列的尾部(单向链表)
                 t.nextWaiter = node;
+            //lastWaiter指向这个新创建的节点，->第一个次时firstWaiter and lastWaiter same
             lastWaiter = node;
             return node;
         }
@@ -1464,6 +1473,8 @@ public abstract class AbstractQueuedSynchronizer
 
         /**
          * 删除条件队列当中被取消的节点
+         * 从首节点开始，剔除waitState!= Node.CONDITION == -2节点
+         * 条件队列时，Node使用的是单链表结构
          */
         private void unlinkCancelledWaiters() {
             Node t = firstWaiter;
@@ -1471,15 +1482,32 @@ public abstract class AbstractQueuedSynchronizer
             while (t != null) {
                 Node next = t.nextWaiter;
                 if (t.waitStatus != Node.CONDITION) {
+                    //如果 t的waitState不是Condition，设置他的下级节点为空
                     t.nextWaiter = null;
+                    /**
+                     * 1、如果trail为空，还是目录还有一个节点的状态为-2
+                     * 2、此时直接把firstWaiter设置为他的下级节点
+                     *
+                     */
                     if (trail == null)
                         firstWaiter = next;
                     else
                         trail.nextWaiter = next;
+                    /**
+                     * 当等待队列中只有一个node，并且这个node的waiteState不是-2
+                     * 此时firstWaiter和nextWaiter都会被设置为空
+                     * 当等待队列中只有一个waitState的状态为-2的Node时，此时firstNode和nextNode节点是都指向这个节点，
+                     * 并且这个节点的nextWaiter为空
+                     *
+                     * 如果有多个节点，并且有节点的waiterState为-2，
+                     * 此时next节点为空，则把最后一个等待节点设置为trail，这时的trail是这个等待状态为-2的节点。
+                     */
+
                     if (next == null)
                         lastWaiter = trail;
                 }
                 else
+                    //记录上个为waitState==-2的节点
                     trail = t;
                 t = next;
             }
@@ -1580,11 +1608,16 @@ public abstract class AbstractQueuedSynchronizer
                 throw new InterruptedException();
             //把当前节点加入条件队列
             Node node = addConditionWaiter();
-            //释放掉已经获取的独占锁资源
+            /**
+             * 1、释放掉已经获取的独占锁资源 ，
+             * 2、同时如果head不为空，并且waitState的!=0,（以独占来说，此时waitState==-1 则唤醒下个节点
+             */
             int savedState = fullyRelease(node);
+            //记录唤醒模式
             int interruptMode = 0;
             //如果不在同步队列中则不断挂起
             while (!isOnSyncQueue(node)) {
+                //如果Node节点部位同步队列中，阻塞此线程
                 LockSupport.park(this);
                 //这里被唤醒可能是正常的signal操作也可能是中断
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
@@ -1602,6 +1635,7 @@ public abstract class AbstractQueuedSynchronizer
             if (node.nextWaiter != null) // clean up if cancelled
                 unlinkCancelledWaiters();
             //根据不同模式处理中断
+            //interruptMode==0 说明是被正常signal()方法唤醒的
             if (interruptMode != 0)
                 reportInterruptAfterWait(interruptMode);
         }
