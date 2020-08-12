@@ -1245,7 +1245,7 @@ public abstract class AbstractQueuedSynchronizer
         //注：同步队列是有头节点的，而条件队列没有
         if (node.waitStatus == Node.CONDITION || node.prev == null)
             return false;
-        //快速判断2：next字段只有同步队列才会使用，条件队列中使用的是ne    qwertuoip[]\xtWaiter字段
+        //快速判断2：next字段只有同步队列才会使用，条件队列中使用的是nextWaiter字段
         if (node.next != null) // If has successor, it must be on queue
             return true;
         //上面如果无法判断则进入复杂判断
@@ -1303,7 +1303,7 @@ public abstract class AbstractQueuedSynchronizer
      */
     final boolean transferAfterCancelledWait(Node node) {
         /**
-         * 把等待状态设置为初始化状态，然后加入CLH队列，如果Cas修改的状态失败
+         * 把等待状态设置为初始化状态，然后加入CLH队列，如果Cas修改的状态失败，说明此时signal方法正在把节点转一个同步对类中
          * 判断节点是不是已经在同步队列中了
          */
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
@@ -1316,6 +1316,8 @@ public abstract class AbstractQueuedSynchronizer
          * incomplete transfer is both rare and transient, so just
          * spin.
          */
+        //此时是线程调用了signal()，正在把节点转义到同步队列中，此时让出cpu执行权，
+        //等待signal()方法把等待队列的节点转义到同步队列中，然后判断当前已经在同步对垒中之后，就跳出循环返回false
         while (!isOnSyncQueue(node))
             Thread.yield();
         return false;
@@ -1421,11 +1423,20 @@ public abstract class AbstractQueuedSynchronizer
         /**
          * 1.与同步队列不同，条件队列头尾指针是firstWaiter跟lastWaiter
          * 2.条件队列是在获取锁之后，也就是临界区进行操作，因此很多地方不用考虑并发
+         * 为什么判断最后一个节点?
+         * 因为新的等待节点都是会加载最后
+         *
+         * a、判断lastWaiter不为空，并且状态不是Node.CONDITION即-2 ，调用unlinkCancelledWaiters，删除的所有被取消的等待节点
+         * 然后t设置为新的lastWaiter
+         * b、新建一个等待节点node，如果lastWaiter为空，说明此时等待队列中没有元素，然后firstWaiter可以直接指向node
+         * c、如果lastWaiter不为空，把t.nextWaiter单链表指向node
+         * d、然后让这个lastWaiter指针指向node
+         * 返回node
          */
         private Node addConditionWaiter() {
             //当第一次进入此方法时，lastWaiter和firstWaiter都是null
             Node t = lastWaiter;
-            //如果最后一个节点被取消，则删除队列中被取消的节点
+            //如果最后一个节点被取消，则删除队列中被取消的节点,重新获取lastWaiter
             //至于为啥是最后一个节点后面会分析
             if (t != null && t.waitStatus != Node.CONDITION) {
                 //删除所有被取消的节点
@@ -1580,7 +1591,7 @@ public abstract class AbstractQueuedSynchronizer
         /**
          * 这里的判断逻辑是：
          * 1.如果现在不是中断的，即正常被signal唤醒则返回0
-         * 2.如果节点由中断加入同步队列则返回THROW_IE，由signal加入同步队列则返回REINTERRUPT
+         * 2、如果节点是中断状态加入到tongue队列的，此时返回THROW_IE，如果不是则返回REINTERRUPT
          */
         private int checkInterruptWhileWaiting(Node node) {
             return Thread.interrupted() ?
@@ -1617,8 +1628,9 @@ public abstract class AbstractQueuedSynchronizer
             int interruptMode = 0;
             //如果不在同步队列中则不断挂起
             while (!isOnSyncQueue(node)) {
-                //如果Node节点部位同步队列中，阻塞此线程
+                //如果Node节点部位同步队列中，阻塞此线程，
                 LockSupport.park(this);
+                //为什么要判断是中断唤醒的还是signal正常唤醒的？ 因为 LockSupport.park 方法是响应中断的
                 //这里被唤醒可能是正常的signal操作也可能是中断
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                     break;
