@@ -1304,6 +1304,8 @@ public abstract class AbstractQueuedSynchronizer
     final boolean transferAfterCancelledWait(Node node) {
         /**
          * 把等待状态设置为初始化状态，然后加入CLH队列，如果Cas修改的状态失败，说明此时signal方法正在把节点转一个同步对类中
+         * 状态Node.CONDITION，说明线程是在通知前被取消了，直接放到同步队列中
+         *
          * 判断节点是不是已经在同步队列中了
          */
         if (compareAndSetWaitStatus(node, Node.CONDITION, 0)) {
@@ -1316,6 +1318,7 @@ public abstract class AbstractQueuedSynchronizer
          * incomplete transfer is both rare and transient, so just
          * spin.
          */
+        //状态如果不是CONDITION，说明是在通知后，中断的线程，此时可能正在入队
         //此时是线程调用了signal()，正在把节点转义到同步队列中，此时让出cpu执行权，
         //等待signal()方法把等待队列的节点转义到同步队列中，然后判断当前已经在同步对垒中之后，就跳出循环返回false
         while (!isOnSyncQueue(node))
