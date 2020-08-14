@@ -330,6 +330,14 @@ public abstract class AbstractQueuedSynchronizer
     private void unparkSuccessor(Node node) {
         //获取wait状态
         int ws = node.waitStatus;
+        /**
+         * head能唤醒下级节点，此时head的ws肯定为-1，此处为什么要再次改成0呢？
+         *
+         * 目的其实很简单，这个操作在公平锁的情况下没有作用.
+         * 但是在非公平锁的情况下，head后面的节点在获取的锁的时候(公平锁的情况下肯定能获得锁，因为其他的节点都被park了)
+         * 很有可能会失败，此时head节点后面的这个要被重新阻塞，这个节点要能被正常阻塞，就要把head的ws从0，改为-1，
+         * 如果unparkSuccessor方法没有head的ws重新设置为0，那么head后面的这个节点在拿锁失败之后，这个节点就不可能再被唤醒了。
+         */
         if (ws < 0)
             // 将等待状态waitStatus设置为初始值0
             compareAndSetWaitStatus(node, ws, 0);
@@ -411,11 +419,22 @@ public abstract class AbstractQueuedSynchronizer
     // Utilities for various versions of acquire
 
     /**
+     *
+     * 能进入此方法，说明节点在获取锁的过程中被stop了或者报错了
+     * 1、此时判断当前节点是否为空，如果为空return;
+     * 2、把当前节点的thread属性设置为空
+     * 3、如果从当前节点往前循环，移除队列中的ws为CANCELED的节点，确保当前节点的前驱节点状态 <0
+     * 4、设置当前节点的状态为CANCELED
+     * 5、判断当前节点是否是尾节点，如果是直接移除，然后把当前节点的前驱节点设置为尾节点
+     * 6、如果不是尾节点，如果时head节点，那么就是直接唤醒下个节点。
+     * 7、如果也不是head节点，则获取当前节点下个节点，如果下个节点状态<0或者能被改成-1,然后就当前节点下级节点，放到他的上级节点后面
+     * （其实也是相当删除自己了)
      * Cancels an ongoing attempt to acquire.
      *
      * @param node the node
      */
     private void cancelAcquire(Node node) {
+
         // Ignore if node doesn't exist
         if (node == null)
             return;
@@ -460,7 +479,7 @@ public abstract class AbstractQueuedSynchronizer
                 //如果pred节点是head节点，直接唤醒下个一个节点
                 unparkSuccessor(node);
             }
-
+            //代码走到这里，让这个节点自己执行自己
             node.next = node; // help GC
         }
     }
@@ -506,6 +525,9 @@ public abstract class AbstractQueuedSynchronizer
             /*
              * 当前驱节点waitStatus为 0 or PROPAGATE（传播状态）状态时
              * 将其设置为SIGNAL状态，然后当前结点才可以可以被安全地park
+             * 1、能上级节点的waitStatus改成-1，说明当前节点目前是正常运行，是可以被唤醒
+             * 2、当然从另外一个方面来说，下级节点的状态能否被唤醒这个状态记录在上级节点，上级节点在唤醒下级节点的时候，就非常
+             * 方便
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
@@ -568,6 +590,13 @@ public abstract class AbstractQueuedSynchronizer
                  *
                  */
                 if (p == head && tryAcquire(arg)) {
+                    /**
+                     * head节点在唤醒后继节点时，没有被移除队列，那么他什么时候，被移除的呢？
+                     * 答案：
+                     * 就在后继节点获取到了锁之后，就把让head指针直接指向自己，然后把prev属性和thread属性设置为空
+                     * 同时还是会让原head节点的next指向空，此时原head节点的就变成一个没有引用的空对象，会被gc回收掉
+                     */
+
                     //获取锁成功，让head节点的指针指向当前节点，同时清空thread属性，及prev属性
                     setHead(node);
                     p.next = null; // help GC
