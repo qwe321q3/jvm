@@ -1575,9 +1575,9 @@ public abstract class AbstractQueuedSynchronizer
                 throw new IllegalMonitorStateException();
             Node first = firstWaiter;
             if (first != null)
-                /**
-                 * 发信号通知条件队列的节点准备到同步队列当中去排队
-                 */
+            /**
+             * 发信号通知条件队列的节点准备到同步队列当中去排队
+             */
                 doSignal(first);
         }
 
@@ -1631,7 +1631,8 @@ public abstract class AbstractQueuedSynchronizer
         /**
          * 这里的判断逻辑是：
          * 1.如果现在不是中断的，即正常被signal唤醒则返回0
-         * 2、如果节点是中断状态加入到tongue队列的，此时返回THROW_IE，如果不是则返回REINTERRUPT
+         * 2、如果节点是中断状态加入到队列的，此时返回THROW_IE(需要抛出异常，如果不是则返回REINTERRUPT
+         * 需要重新中断
          */
         private int checkInterruptWhileWaiting(Node node) {
             return Thread.interrupted() ?
