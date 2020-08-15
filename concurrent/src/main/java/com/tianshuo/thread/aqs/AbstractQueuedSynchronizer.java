@@ -467,7 +467,7 @@ public abstract class AbstractQueuedSynchronizer
             int ws;
             //1、如果pred接待不是头结点，同时的他的信号量是-1或者<=能用cas设置为-1并且pred的线程不为空
             //2、此时获取他的下个节点，如果下个节点不为空并且信号量小于等于0
-            //3、使用cas操作吧，把pred的下个节点设置为node的next节点
+            //3、使用cas操作，把pred的下个节点设置为node的next节点
             if (pred != head &&
                     ((ws = pred.waitStatus) == Node.SIGNAL ||
                             (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
