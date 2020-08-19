@@ -1,8 +1,13 @@
 package com.tianshuo.model;
 
+import org.springframework.stereotype.Component;
+
 import java.util.UUID;
 
+@Component
 public class Order {
+
+
     private final String id = UUID.randomUUID().toString();
 
     private String name ;
@@ -25,6 +30,7 @@ public class Order {
     }
 
     public Order() {
+        System.out.println("order construct ..");
     }
 
 
