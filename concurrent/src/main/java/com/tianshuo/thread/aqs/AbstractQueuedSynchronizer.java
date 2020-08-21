@@ -333,10 +333,12 @@ public abstract class AbstractQueuedSynchronizer
         /**
          * head能唤醒下级节点，此时head的ws肯定为-1，此处为什么要再次改成0呢？
          *
-         * 目的其实很简单，这个操作在公平锁的情况下没有作用.
-         * 但是在非公平锁的情况下，head后面的节点在获取的锁的时候(公平锁的情况下肯定能获得锁，因为其他的节点都被park了)
-         * 很有可能会失败，此时head节点后面的这个要被重新阻塞，这个节点要能被正常阻塞，就要把head的ws从0，改为-1，
-         * 如果unparkSuccessor方法没有head的ws重新设置为0，那么head后面的这个节点在拿锁失败之后，这个节点就不可能再被唤醒了。
+         * 目的其实很简单，
+         * 1、这个操作在公平锁的情况下没有作用.(公平锁的情况下肯定能获得锁，因为其他的节点都被park了)
+         * 2、但是在非公平锁的情况下，head后面的节点在获取的锁的时候
+         * 很有可能会失败，此时获取的锁失败的节点要被重新阻塞，此时把这个节点被阻塞之后，要能确保这个节点能正常唤醒后续节点就要把状态设置为0，
+         * 给后续入队的节点，把0改成-1的机会，以此来确保后续节点是确保能唤醒的，如果没有此段代码，就少了一步都后续节点把前驱节点状态改为-1的
+         * 校验步骤
          */
         if (ws < 0)
             // 将等待状态waitStatus设置为初始值0
@@ -359,27 +361,41 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
-     * 把当前结点设置为SIGNAL或者PROPAGATE
-     * 唤醒head.next(B节点)，B节点唤醒后可以竞争锁，成功后head->B，然后又会唤醒B.next，一直重复直到共享节点都唤醒
-     * head节点状态为SIGNAL，重置head.waitStatus->0，唤醒head节点线程，唤醒后线程去竞争共享锁
-     * head节点状态为0，将head.waitStatus->Node.PROPAGATE传播状态，表示需要将状态向后继节点传播
+     *
+     * 在共享锁的情况下，此方法会有2个地方调用
+     * 1、在获取到共享锁的线程释放锁是release()中会调用
+     * 2、在CLH队列中入队拿到锁的线程，在判断凭证数量大于0时，调用的。
+     *
+     *
+     * <此方法比较难>，在共享锁的情况下，这个方法会有很多线程在这人方法的内部执行，只要的head的没有变，这个方法执行就会继续下去
+     * 此处会形成"调用风暴"，但同时效率会很高，也需要考虑更多的并发情况。
      */
     private void doReleaseShared() {
         for (;;) {
+            //记录的head节点
             Node h = head;
+            /**
+             *  1、判断的head不等于空并且等于tail节点，其实就是要求队列中至少要有2个节点。
+             *  2、如果只有一个节点，就没必要向后传播了
+             */
             if (h != null && h != tail) {
                 int ws = h.waitStatus;
-                if (ws == Node.SIGNAL) {//head是SIGNAL状态
-                    /* head状态是SIGNAL，重置head节点waitStatus为0，这里不直接设为Node.PROPAGATE,
-                     * 是因为unparkSuccessor(h)中，如果ws < 0会设置为0，所以ws先设置为0，再设置为PROPAGATE
-                     * 这里需要控制并发，因为入口有setHeadAndPropagate跟release两个，避免两次unpark
-                     */
+
+                /**
+                 *
+                 * 1.第一个虚拟head节点的ws为0
+                 * 2.第一个虚拟节点后面的节点ws 为-1
+                 * 3.中间虚拟节点ws为-1，最后一个节点的ws为0
+                 * 共享锁的情况下，如果如果许可充足会同时唤醒多个节点，此时的head节点，会被多次修改，最后直到票据不充足时，才确定下来
+                 *
+                 */
+
+                if (ws == Node.SIGNAL) {
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
-                        continue; //设置失败，重新循环
-                    /* head状态为SIGNAL，且成功设置为0之后,唤醒head.next节点线程
-                     * 此时head、head.next的线程都唤醒了，head.next会去竞争锁，成功后head会指向获取锁的节点，
-                     * 也就是head发生了变化。看最底下一行代码可知，head发生变化后会重新循环，继续唤醒head的下一个节点
-                     */
+                        //设置失败，重新循环
+                        continue;
+
+                    //唤醒后继节点
                     unparkSuccessor(h);
                     /*
                      * 如果本身头节点的waitStatus是出于重置状态（waitStatus==0）的，将其设置为“传播”状态。
@@ -390,7 +406,11 @@ public abstract class AbstractQueuedSynchronizer
                         !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
                     continue;                // loop on failed CAS
             }
-            if (h == head) //如果head变了，重新循环
+            /**
+             * 退出此循环唯一条件就是判断head与当前的h相等，
+             * 如果head与h 不一样的， 所以此时head已经CLH队列中，获取到锁的线程给修改了，此时继续循环，继续唤醒head的下个节点。
+             */
+            if (h == head)
                 break;
         }
     }
@@ -402,13 +422,15 @@ public abstract class AbstractQueuedSynchronizer
         Node h = head; //h用来保存旧的head节点
         setHead(node);//head引用指向node节点
         /* 这里意思有两种情况是需要执行唤醒操作
-         * 1.propagate > 0 表示调用方指明了后继节点需要被唤醒
-         * 2.头节点后面的节点需要被唤醒（waitStatus<0），不论是老的头结点还是新的头结点
+         * 1.propagate > 0 表示调用方指明了票据还有剩余，后继节点需要广播唤醒
+         * 2.头节点后面的节点需要被唤醒（waitStatus<0 主要指的状态为-1或者-3的节点，为-2的节点在等待队列中，不在CLH队列中，不涉及），
+         * 不论是老的头结点还是新的头结点
          */
         if (propagate > 0 || h == null || h.waitStatus < 0 ||
                 (h = head) == null || h.waitStatus < 0) {
             Node s = node.next;
-            if (s == null || s.isShared())//node是最后一个节点或者 node的后继节点是共享节点
+            //node是最后一个节点或者 node的后继节点是共享节点
+            if (s == null || s.isShared())
                 /* 如果head节点状态为SIGNAL，唤醒head节点线程，重置head.waitStatus->0
                  * head节点状态为0(第一次添加时是0)，设置head.waitStatus->Node.PROPAGATE表示状态需要向后继节点传播
                  */
@@ -523,10 +545,10 @@ public abstract class AbstractQueuedSynchronizer
             pred.next = node;
         } else {
             /*
-             * 当前驱节点waitStatus为 0 or PROPAGATE（传播状态）状态时
+             * 当前驱节点waitStatus为 0 or PROPAGATE -3（传播状态用在共享锁情况下）状态时
              * 将其设置为SIGNAL状态，然后当前结点才可以可以被安全地park
              * 1、能上级节点的waitStatus改成-1，说明当前节点目前是正常运行，是可以被唤醒
-             * 2、当然从另外一个方面来说，下级节点的状态能否被唤醒这个状态记录在上级节点，上级节点在唤醒下级节点的时候，就非常
+             * 2、当然从另外一个方面来说，下级节点的状态能把被唤醒这个状态记录在上级节点，上级节点在唤醒下级节点的时候，就非常
              * 方便
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
@@ -1680,12 +1702,15 @@ public abstract class AbstractQueuedSynchronizer
              * 走到这里说明节点已经条件满足被加入到了同步队列中或者中断了
              * 这个方法很熟悉吧？就跟独占锁调用同样的获取锁方法，从这里可以看出条件队列只能用于独占锁
              * 在处理中断之前首先要做的是从同步队列中成功获取锁资源
+             * acquireQueued 如果返回true，说明获取到锁了，但是这个线程是被中断唤醒的，如果这个线程此时的中断模式不是THROW_IE，就
+             * 就把中断模式设置为REINTERRUPT 即重新中断
              */
             if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
                 interruptMode = REINTERRUPT;
             //走到这里说明已经成功获取到了独占锁，接下来就做些收尾工作
             //删除条件队列中被取消的节点
             if (node.nextWaiter != null) // clean up if cancelled
+                //如果等待节点是取消状态，则从等待队列总移除
                 unlinkCancelledWaiters();
             //根据不同模式处理中断
             //interruptMode==0 说明是被正常signal()方法唤醒的
