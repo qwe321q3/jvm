@@ -397,11 +397,26 @@ public abstract class AbstractQueuedSynchronizer
 
                     //唤醒后继节点
                     unparkSuccessor(h);
-                    /*
-                     * 如果本身头节点的waitStatus是出于重置状态（waitStatus==0）的，将其设置为“传播”状态。
-                     * 意味着需要将状态向后一个节点传播
-                     */
+
+
                 }
+                /**
+                 *
+                 * ws == 0 此时节点位于一个中间状态
+                 *
+                 * 方法能执行到此处，有2种情况
+                 * 1、此方法第一次循环完成之后，此时刚好head节点有变化，第二次循环时就会进入此方法
+                 * 2、CLH队列中的最后一个节点的ws为0
+                 *
+                 *  ws == 0 && !compareAndSetWaitStatus(h, 0, Node.PROPAGATE)
+                 *
+                 *  !compareAndSetWaitStatus(h, 0, Node.PROPAGATE) 会有在一个种情况下失败，及在有新的节点入队成功，在执行 shouldParkWaitAfter中的
+                 *  compareAndSetWaitStatus(h, 0, Node.SIGNAL) 设置前驱节点为-1时功能，那么此时这个判断会失败，此时会触发再次循环，然后新入队的节点
+                 *  不要睡眠，直接把他唤醒 ，  此时唤醒后继节点时，会unpark一个未被park的节点，那么这个节点在下次执行park时也不会被park住，
+                 *  到时候会继续执行，此时也符合共享锁的情况
+                 *
+                 *
+                 */
                 else if (ws == 0 &&
                         !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
                     continue;                // loop on failed CAS
