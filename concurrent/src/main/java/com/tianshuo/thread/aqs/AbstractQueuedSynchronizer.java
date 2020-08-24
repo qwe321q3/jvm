@@ -516,7 +516,8 @@ public abstract class AbstractQueuedSynchronizer
                 //如果pred节点是head节点，直接唤醒下个一个节点
                 unparkSuccessor(node);
             }
-            //代码走到这里，让这个节点自己执行自己
+            //代码走到这里，让这个节点自己指向自己，为了方便快速判断节点是否在同步队列中isOnSyncQueue，if(node.next!=null) retrun true;
+            //同时也能满足的GC roots 算法做GC回收
             node.next = node; // help GC
         }
     }
