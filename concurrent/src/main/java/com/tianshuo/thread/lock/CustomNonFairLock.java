@@ -10,7 +10,13 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * 自定义锁  非公平
  * <p>
- * 模拟AQS
+ * 模拟AQS锁实现
+ * 1、volatile类型state变量用来表是是否加锁，定义state的偏移量，方便之后用来做的cas的操作
+ * 2、定义tryAcquire方法，用来尝试加锁，如果状态static能被cas操作修改为了1标识加锁成功，同时设置ExclusiveThreadHolder的为当前变量，
+ * 如果不能设置为1，标识加锁失败，把加锁失败的线程放入到queue中，同时自旋尝试修改state，如果还不成阻塞此，保持线程还在自旋内，方便下次
+ * 获取锁
+ * 3、释放锁时，判断是当前线程是否为获取锁的线程，如果是的则用cas设置state为0，同时设置线程独占者为null
+ *
  * <p>
  * 使用CAS来保证的锁状态信号量
  */
@@ -24,6 +30,8 @@ public class CustomNonFairLock {
 
     /**
      * state字段的内存偏移量
+     * 为什么原子操作是根据偏移量来设置的，
+     * 主要是因为unsafe类里边api本身是绕过来jvm虚拟机，只要底层所以只能使用这种方式
      */
     private static long stateOffset;
 
