@@ -32,3 +32,6 @@ hs_err_pid*
 /jvm-introduction/jvm-introduction.iml
 /jvm-introduction/target
 /target
+workspace
+.project
+.classpath
