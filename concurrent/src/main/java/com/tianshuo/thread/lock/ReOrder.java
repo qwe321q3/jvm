@@ -17,7 +17,7 @@ public class ReOrder {
 
             Thread t1 = new Thread(() -> {
                 //由于线程one先启动，下面这句话让它等一等线程two. 可根据自己电脑的实际性能适当调整等待时间.
-//                shortWait(10000);
+                shortWait(1000000);
                 a = 1;
                 x = b;
             }, "t1");
@@ -35,7 +35,7 @@ public class ReOrder {
             System.out.println("第" + i + "次 : x="+x+" ,y="+y);
 
             if (x == 0 && y == 0) {
-                System.out.println("第" + i + "次 : x=0 ,y=0");
+                System.err.println("第" + i + "次 : x=0 ,y=0");
                 break;
             }
 
