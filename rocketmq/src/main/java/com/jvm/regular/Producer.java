@@ -1,4 +1,4 @@
-package com.jvm;
+package com.jvm.regular;
 
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -17,7 +17,7 @@ public class Producer
     public static void main( String[] args ) throws InterruptedException, MQClientException {
         //声明并初始化一个producer
         //需要一个producer group名字作为构造方法的参数，这里为producer1
-        DefaultMQProducer producer = new DefaultMQProducer("producer1");
+        DefaultMQProducer producer = new DefaultMQProducer("producerGroup");
 
         //设置NameServer地址,此处应改为实际NameServer地址，多个地址之间用；分隔
         //NameServer的地址必须有，但是也可以通过环境变量的方式设置，不一定非得写死在代码里
@@ -30,8 +30,8 @@ public class Producer
         for (int i = 0; i < 100; i++) {
             try {
                 Message msg = new Message("RocketTopic",// topic
-                        "TagA",// tag
-                        ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)// body
+                        "userTag",// tag
+                        ("Hello user RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)// body
                 );
 
                 //调用producer的send()方法发送消息
