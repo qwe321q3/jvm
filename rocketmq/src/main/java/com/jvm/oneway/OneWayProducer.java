@@ -23,7 +23,7 @@ public class OneWayProducer
         // 定义producer
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer("oneWayProducerGroup");
         // 设置 nameServer ，namesvr中记录了broker的地址及路由
-        defaultMQProducer.setNamesrvAddr("192.168.31.98:9876");
+        defaultMQProducer.setNamesrvAddr("192.168.31.3:9876;192.168.31.4:9876");
 
         defaultMQProducer.start();
 

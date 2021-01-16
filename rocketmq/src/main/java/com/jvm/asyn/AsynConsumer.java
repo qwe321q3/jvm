@@ -25,7 +25,7 @@ public class AsynConsumer {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer("AsynConsumerGroup");
         defaultMQPushConsumer.subscribe("asynTopic", "asynTag");
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        defaultMQPushConsumer.setNamesrvAddr("192.168.31.98:9876");
+        defaultMQPushConsumer.setNamesrvAddr("192.168.31.3:9876;192.168.31.4:9876");
 
         defaultMQPushConsumer.registerMessageListener((MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> {
             for (int i = 0; i < list.size(); i++) {

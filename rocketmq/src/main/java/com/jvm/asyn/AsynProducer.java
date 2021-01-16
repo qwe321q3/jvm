@@ -20,8 +20,8 @@ public class AsynProducer {
     public static void main(String[] args) throws MQClientException, RemotingException, InterruptedException {
 
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer("AsyncProducerGroup");
-        defaultMQProducer.setNamesrvAddr("192.168.31.98:9876");
-        defaultMQProducer.setRetryTimesWhenSendAsyncFailed(0);
+        defaultMQProducer.setNamesrvAddr("192.168.31.3:9876;192.168.31.4:9876");
+        defaultMQProducer.setRetryTimesWhenSendAsyncFailed(2);
 
         defaultMQProducer.start();
 

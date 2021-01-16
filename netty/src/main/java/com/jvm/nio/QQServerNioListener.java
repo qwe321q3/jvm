@@ -25,6 +25,7 @@ public class QQServerNioListener {
         Selector selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         while (true) {
+            // select 为阻塞方法
             selector.select(2000);//等有事件发生了才会继续
             System.out.println("wait handle..");
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
