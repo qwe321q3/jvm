@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
+ * 未使用的io多用复用的NIO
+ *
  * nio 轮询方式实现的NIO，有空轮询效率问题
  * 1、nio与bio相比第一个区别就是可以设置为的非阻塞
  * 2、nio多路复用  reactor模式
