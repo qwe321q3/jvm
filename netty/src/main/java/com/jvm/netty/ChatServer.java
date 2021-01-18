@@ -8,15 +8,18 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * 聊天室服务端NettyServer
  *
  */
 public class ChatServer {
-    private static int port;
     public static void main(String[] args) throws InterruptedException {
-        if (args[0] != null) {
+         int port = 9000;
+
+        if (args.length >0) {
             port = Integer.parseInt(args[0]);
         }
 
@@ -30,7 +33,9 @@ public class ChatServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new DiscardServerHandler());
+                            ch.pipeline().addLast("decoder", new StringDecoder());
+                            ch.pipeline().addLast("encoder", new StringEncoder());
+                            ch.pipeline().addLast(new ChatServerHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
