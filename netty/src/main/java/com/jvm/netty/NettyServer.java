@@ -8,9 +8,19 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolver;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * DISCARD
+ * 关于netty的编码解码，如果不使用编码解码器，只能够传输ByteBuf类型的数据。
+ * 当时的使用是String的编码解码器，则可以直接传递字符串
+ * 为Object编码解码器时，可以直接传输对象
+ *
  */
 public class NettyServer {
 
@@ -32,6 +42,11 @@ public class NettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            // 入站
+//                            ch.pipeline().addLast(new StringEncoder());
+//                            ch.pipeline().addLast(new StringDecoder());
+//                            ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
+//                            ch.pipeline().addLast(new ObjectEncoder());
                             ch.pipeline().addLast(new DiscardServerHandler());
                         }
                     })

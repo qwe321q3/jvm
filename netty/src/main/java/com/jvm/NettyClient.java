@@ -1,16 +1,16 @@
 package com.jvm;
 
-import com.jvm.netty.ChatClientHandler;
+import com.jvm.model.User;
+import com.jvm.util.ProtostuffUtils;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class NettyClient {
@@ -32,10 +32,12 @@ public class NettyClient {
             b.handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    //去除编码解码
+                    // 出站需要编码 客户端 --> 服务端  == 出站
 //                    ch.pipeline().addLast("decoder", new StringDecoder());
 //                    ch.pipeline().addLast("encoder", new StringEncoder());
-                    ch.pipeline().addLast(new ChatClientHandler());
+//                    ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
+//                    ch.pipeline().addLast(new ObjectEncoder());
+                    ch.pipeline().addLast(new NettyClientHandler());
                 }
             });
 
@@ -45,7 +47,11 @@ public class NettyClient {
             Channel channel = f.channel();
             Scanner scanner = new Scanner(System.in);
             while (scanner.hasNext()) {
-                channel.writeAndFlush(Unpooled.copiedBuffer(scanner.next().getBytes(StandardCharsets.UTF_8)));
+//                channel.writeAndFlush(Unpooled.copiedBuffer(scanner.next().getBytes(StandardCharsets.UTF_8)));
+//                channel.writeAndFlush(new User("1",scanner.next()));
+
+                channel.writeAndFlush(ProtostuffUtils.serialize(new User("1",scanner.next())));
+
             }
 
             // Wait until the connection is closed.

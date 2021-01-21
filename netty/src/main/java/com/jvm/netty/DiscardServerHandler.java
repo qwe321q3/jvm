@@ -1,5 +1,7 @@
 package com.jvm.netty;
 
+import com.jvm.model.User;
+import com.jvm.util.ProtostuffUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,28 +26,26 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        super.channelRead(ctx, msg);
-
-        ByteBuf in = (ByteBuf) msg;
+        System.out.println("aaa");
         try {
-            System.out.println(in.toString(CharsetUtil.UTF_8));
+            // ByteBuf
+//                    ByteBuf in = (ByteBuf) msg;
+//            System.out.println(in.toString(CharsetUtil.UTF_8));
+//            ByteBuf resp = Unpooled.copiedBuffer("msg back success".getBytes()); // 5
 
-            ByteBuf resp = Unpooled.copiedBuffer("msg back success".getBytes()); // 5
+            // String
+//            System.out.println((String) msg);
 
+//            System.out.println((User)msg);
 
-            ctx.writeAndFlush(resp);
-//            in.writeBytes("msg back success ..".getBytes());
-//            while (in.isReadable()) { // (1)
-//            System.out.print(in.toString(CharsetUtil.UTF_8));
-//                System.out.flush();
-//        }
+            // protosuff解析
+            System.out.println(ProtostuffUtils.deserialize((byte[])msg,User.class));
+            ctx.writeAndFlush(ProtostuffUtils.serialize(new User("1","server：ok")));
         } finally {
             ReferenceCountUtil.release(msg); // (2)
         }
+        super.channelRead(ctx, msg);
 
-//        System.out.println("接收消息:"+msg);
-//
-//        ((ByteBuf)msg).release();
     }
 
     @Override
