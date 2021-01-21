@@ -1,4 +1,4 @@
-package com.jvm.netty;
+package com.jvm.netty.bytebuf;
 
 
 import io.netty.buffer.ByteBuf;

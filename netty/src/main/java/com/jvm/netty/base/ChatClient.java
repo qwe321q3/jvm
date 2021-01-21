@@ -1,4 +1,4 @@
-package com.jvm.netty;
+package com.jvm.netty.base;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

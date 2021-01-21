@@ -1,4 +1,4 @@
-package com.jvm.netty;
+package com.jvm.netty.base;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;

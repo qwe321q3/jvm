@@ -1,4 +1,4 @@
-package com.jvm.netty;
+package com.jvm.netty.base;
 
 import com.jvm.model.User;
 import com.jvm.util.ProtostuffUtils;
