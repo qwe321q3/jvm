@@ -3,6 +3,7 @@ package com.jvm;
 import com.jvm.model.User;
 import com.jvm.util.ProtostuffUtils;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -18,7 +19,7 @@ public class NettyClient {
     public static void main(String[] args) throws InterruptedException {
 
 
-        int port = 8080;
+        int port = 8000;
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
@@ -50,7 +51,7 @@ public class NettyClient {
 //                channel.writeAndFlush(Unpooled.copiedBuffer(scanner.next().getBytes(StandardCharsets.UTF_8)));
 //                channel.writeAndFlush(new User("1",scanner.next()));
 
-                channel.writeAndFlush(ProtostuffUtils.serialize(new User("1",scanner.next())));
+                channel.writeAndFlush(Unpooled.copiedBuffer(ProtostuffUtils.serialize(new User("1",scanner.next()))));
 
             }
 

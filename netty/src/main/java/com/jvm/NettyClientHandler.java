@@ -18,13 +18,15 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
+
 
 
 //        System.out.println((User)msg);
-//        ByteBuf b = (ByteBuf) msg;
+        ByteBuf in = (ByteBuf) msg;
 //        System.out.println(b.toString(CharsetUtil.UTF_8));
-        System.out.println(ProtostuffUtils.deserialize((byte[])msg, User.class));
+        byte[] b = new byte[in.readableBytes()];
+        in.readBytes(b);
+        System.out.println(ProtostuffUtils.deserialize(b, User.class));
 
     }
 

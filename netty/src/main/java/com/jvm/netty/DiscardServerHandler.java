@@ -26,10 +26,10 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
         System.out.println("aaa");
-        try {
             // ByteBuf
-//                    ByteBuf in = (ByteBuf) msg;
+                    ByteBuf in = (ByteBuf) msg;
 //            System.out.println(in.toString(CharsetUtil.UTF_8));
 //            ByteBuf resp = Unpooled.copiedBuffer("msg back success".getBytes()); // 5
 
@@ -38,14 +38,12 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
 //            System.out.println((User)msg);
 
-            // protosuff解析
-            System.out.println(ProtostuffUtils.deserialize((byte[])msg,User.class));
-            ctx.writeAndFlush(ProtostuffUtils.serialize(new User("1","server：ok")));
-        } finally {
-            ReferenceCountUtil.release(msg); // (2)
-        }
-        super.channelRead(ctx, msg);
 
+            byte[] b = new byte[in.readableBytes()];
+            in.readBytes(b);
+            // protosuff解析
+            System.out.println(ProtostuffUtils.deserialize(b,User.class));
+            ctx.writeAndFlush(Unpooled.copiedBuffer(ProtostuffUtils.serialize(new User("1","server：ok"))));
     }
 
     @Override
