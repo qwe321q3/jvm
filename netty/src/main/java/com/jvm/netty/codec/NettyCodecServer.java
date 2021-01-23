@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * @ClassName : NettyCodecServer
  * @Description : netty编码解码粘包拆包
+ * 1.netty在不使用解码器时候，默认只能够传递ByteBuf，所以传递writeAndFlush时，需要先把数据转为的ByteBuf来传递
  * @Author : tianshuo
  * @Date: 2021-01-22 16:04
  */
@@ -39,7 +40,8 @@ public class NettyCodecServer {
 //                            ch.pipeline().addLast("decoder", new StringDecoder());
 //                            ch.pipeline().addLast("encoder", new StringEncoder());
 //                            按照指定符号拆包，解决粘包问题
-                            ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, Unpooled.copiedBuffer("#".getBytes(StandardCharsets.UTF_8))));
+//                            ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, Unpooled.copiedBuffer("#".getBytes(StandardCharsets.UTF_8))));
+                            ch.pipeline().addLast(new MyMessageProtocolDecoder());
                             ch.pipeline().addLast(new NettyCodecServerHandler());
                         }
                     })

@@ -1,5 +1,7 @@
 package com.jvm.netty.codec;
 
+import java.util.Arrays;
+
 /**
  * @ClassName : MessageProtocol
  * @Description : 消息协议类
@@ -10,9 +12,12 @@ public class MessageProtocol {
 
     private int len;
 
-    private String body;
+    private byte[] body;
 
-    public MessageProtocol(int len, String body) {
+    public MessageProtocol() {
+    }
+
+    public MessageProtocol(int len, byte[] body) {
         this.len = len;
         this.body = body;
     }
@@ -25,12 +30,20 @@ public class MessageProtocol {
         this.len = len;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "MessageProtocol{" +
+                "len=" + len +
+                ", body=" + Arrays.toString(body) +
+                '}';
     }
 }
 

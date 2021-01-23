@@ -18,9 +18,15 @@ public class NettyCodecServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf byteBuf = (ByteBuf) msg;
+        MessageProtocol messageProtocol = (MessageProtocol) msg;
 
-        logger.info("消息 ：{}",byteBuf.toString(CharsetUtil.UTF_8));
+
+//        MessageProtocol messageProtocol = new MessageProtocol();
+//        messageProtocol.setLen(msg.getBytes(CharsetUtil.UTF_8).length);
+//        messageProtocol.setBody(msg.getBytes(CharsetUtil.UTF_8));
+//        channel.writeAndFlush(messageProtocol);
+
+        logger.info("消息 ：长度为：{},消息内容为： {}",messageProtocol.getLen(),new String(messageProtocol.getBody(),CharsetUtil.UTF_8));
         super.channelRead(ctx, msg);
     }
 

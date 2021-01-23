@@ -40,7 +40,8 @@ public class NettyCodecClient {
 //                    ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
 //                    ch.pipeline().addLast(new ObjectEncoder());
                     // 按照指定符号拆包，解决粘包问题
-                    ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024,Unpooled.copiedBuffer("#".getBytes(StandardCharsets.UTF_8))));
+//                    ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024,Unpooled.copiedBuffer("#".getBytes(StandardCharsets.UTF_8))));
+                    ch.pipeline().addLast(new MyMessageProtocolEncoder());
                     ch.pipeline().addLast(new NettyCodecClientHandler());
                 }
             });
@@ -50,7 +51,15 @@ public class NettyCodecClient {
             ChannelFuture f = b.connect("127.0.0.1", 9000).sync();
             Channel channel = f.channel();
             for (int i = 0; i < 200; i++) {
-                channel.writeAndFlush(Unpooled.copiedBuffer(("消息" + i+"#").getBytes(CharsetUtil.UTF_8)));
+          /*      //ByteBuf传递
+                channel.writeAndFlush(Unpooled.copiedBuffer(("消息" + i+"#").getBytes(CharsetUtil.UTF_8)));*/
+                //自定义的粘包拆包传递
+                String msg = ("消息"+i);
+                MessageProtocol messageProtocol = new MessageProtocol();
+                messageProtocol.setLen(msg.getBytes(CharsetUtil.UTF_8).length);
+                messageProtocol.setBody(msg.getBytes(CharsetUtil.UTF_8));
+                System.out.println(messageProtocol);
+                channel.writeAndFlush(messageProtocol);
             }
 //            Scanner scanner = new Scanner(System.in);
 //            while (scanner.hasNext()) {
