@@ -18,6 +18,7 @@
         <module>jcommand</module>
         <module>reflection</module>
         <module>spring-shell</module>
+        <module>my-rpc</module>
     </modules>
 
     <properties>
