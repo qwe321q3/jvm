@@ -67,11 +67,11 @@ public class NettyClient {
             Method method = IHello.class.getMethod("sayHello", String.class);
             invoke.setClassName(IHello.class.getName());
             invoke.setMethodName(method.getName());
-            invoke.setParamType(invoke.getParamType());
-            invoke.setParam(new Object[]{"tianshuo-rpc"});
-            f.channel().writeAndFlush(invoke);
+            invoke.setParamType(method.getParameterTypes());
+            invoke.setParam(new Object[]{"定速度库"});
             Gson gson = new Gson();
             String msg = gson.toJson(invoke);
+            System.out.println(msg);
             MessageProtocol messageProtocol = new MessageProtocol(msg.getBytes(StandardCharsets.UTF_8).length,msg.getBytes(StandardCharsets.UTF_8));
             f.channel().writeAndFlush(messageProtocol);
             // Wait until the connection is closed.

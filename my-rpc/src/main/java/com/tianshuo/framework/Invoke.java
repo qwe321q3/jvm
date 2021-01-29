@@ -1,6 +1,9 @@
 package com.tianshuo.framework;
 
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * @ClassName : Invoke
@@ -8,6 +11,7 @@ import java.io.Serializable;
  * @Author : tianshuo
  * @Date: 2021-01-29 16:53
  */
+@Data
 public class Invoke implements Serializable {
 
 
@@ -15,7 +19,7 @@ public class Invoke implements Serializable {
 
     private String methodName;
 
-    private Object[] paramType;
+    private Class[] paramType;
 
     private Object[] param;
 
@@ -23,43 +27,15 @@ public class Invoke implements Serializable {
 
     }
 
-    public Invoke(String className, String methodName, Class[] paramType, Object[] param) {
-        this.className = className;
-        this.methodName = methodName;
-        this.paramType = paramType;
-        this.param = param;
-    }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Object[] getParamType() {
-        return paramType;
-    }
-
-    public void setParamType(Object[] paramType) {
-        this.paramType = paramType;
-    }
-
-    public Object[] getParam() {
-        return param;
-    }
-
-    public void setParam(Object[] param) {
-        this.param = param;
+    @Override
+    public String toString() {
+        return "Invoke{" +
+                "className='" + className + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", paramType=" + Arrays.toString(paramType) +
+                ", param=" + Arrays.toString(param) +
+                '}';
     }
 }
 

@@ -38,12 +38,13 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         Invoke invoke = gson.fromJson(new String(messageProtocol.getBody(), CharsetUtil.UTF_8), Invoke.class);
         Class clazz = LocalRegistry.get(invoke.getClassName());
 
-        Method method = clazz.getMethod(invoke.getMethodName(),String.class);
+        Method method = clazz.getDeclaredMethod(invoke.getMethodName(),invoke.getParamType());
 
         Object invoke1 = method.invoke(clazz.newInstance(), invoke.getParam());
+        String res = (String) invoke1;
+        log.info("netty服务端，返回{}",res);
 
-
-        String res = gson.toJson(invoke1);
+//        String res = gson.toJson(invoke1);
         MessageProtocol messageProtocol1 = new MessageProtocol(res.getBytes(StandardCharsets.UTF_8).length,res.getBytes(StandardCharsets.UTF_8));
 
         ctx.channel().writeAndFlush(messageProtocol1);

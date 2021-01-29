@@ -40,7 +40,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         Channel channel = ctx.channel();
         log.info("netty客户端：{},读取数据",channel.remoteAddress());
         MessageProtocol messageProtocol = (MessageProtocol) msg;
-        log.info("服务端数据为：",new String(messageProtocol.getBody(), CharsetUtil.UTF_8));
+        log.info("{}",messageProtocol);
+        log.info("服务端数据为：{}",new String(messageProtocol.getBody(), CharsetUtil.UTF_8));
         super.channelRead(ctx, msg);
     }
 }
