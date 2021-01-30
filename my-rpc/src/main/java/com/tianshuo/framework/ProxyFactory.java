@@ -2,7 +2,9 @@ package com.tianshuo.framework;
 
 
 import com.tianshuo.framework.protocol.Protocol;
+import com.tianshuo.framework.protocol.http.HttpServer;
 import com.tianshuo.framework.protocol.netty.NettyServer;
+import io.netty.handler.codec.http2.Http2PushPromiseFrame;
 import sun.misc.ProxyGenerator;
 
 import java.lang.reflect.InvocationHandler;
@@ -22,7 +24,7 @@ public class ProxyFactory<T> {
                 invoke.setParam(args);
 
 
-                Protocol protocol = new NettyServer("localhost", 8000);
+                Protocol protocol = new HttpServer("localhost",8000);
                 return protocol.send(invoke);
             }
         });

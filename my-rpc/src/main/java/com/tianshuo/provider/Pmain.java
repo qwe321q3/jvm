@@ -15,7 +15,7 @@ public class Pmain {
     public static void main(String[] args) {
 
         LocalRegistry.register(IHello.class.getName(),HelloImpl.class);
-        Protocol nettyServer = new NettyServer("localhost",8000);
+        Protocol nettyServer = new HttpServer("localhost",8000);
         nettyServer.startup();
 
 
