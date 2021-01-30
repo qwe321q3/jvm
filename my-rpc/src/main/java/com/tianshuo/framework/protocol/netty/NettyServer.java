@@ -1,5 +1,6 @@
 package com.tianshuo.framework.protocol.netty;
 
+import com.tianshuo.framework.Invoke;
 import com.tianshuo.framework.protocol.Protocol;
 import com.tianshuo.framework.protocol.netty.codec.MyMessageProtocolDecoder;
 import com.tianshuo.framework.protocol.netty.codec.MyMessageProtocolEncoder;
@@ -11,6 +12,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * netty服务
@@ -71,5 +77,20 @@ public class NettyServer implements Protocol {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public Object send(Invoke invoke) {
+
+        NettyClient nettyClient = new NettyClient("localhost", 8000);
+        nettyClient.startup();
+        try {
+            return nettyClient.send(invoke);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

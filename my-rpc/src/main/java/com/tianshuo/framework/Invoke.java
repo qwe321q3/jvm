@@ -1,6 +1,5 @@
 package com.tianshuo.framework;
 
-import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -11,11 +10,9 @@ import java.util.Arrays;
  * @Author : tianshuo
  * @Date: 2021-01-29 16:53
  */
-@Data
 public class Invoke implements Serializable {
 
-
-    private String className;
+    private String interfaceName;
 
     private String methodName;
 
@@ -27,11 +24,42 @@ public class Invoke implements Serializable {
 
     }
 
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public Class[] getParamType() {
+        return paramType;
+    }
+
+    public void setParamType(Class[] paramType) {
+        this.paramType = paramType;
+    }
+
+    public Object[] getParam() {
+        return param;
+    }
+
+    public void setParam(Object[] param) {
+        this.param = param;
+    }
 
     @Override
     public String toString() {
         return "Invoke{" +
-                "className='" + className + '\'' +
+                "className='" + interfaceName + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", paramType=" + Arrays.toString(paramType) +
                 ", param=" + Arrays.toString(param) +
