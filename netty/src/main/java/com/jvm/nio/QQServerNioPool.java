@@ -56,14 +56,25 @@ public class QQServerNioPool {
                             System.out.println(Thread.currentThread().getName()+" -- handle data");
                             SocketChannel socketChannel  = (SocketChannel) selectionKey.channel();
                             ByteBuffer buffer = ByteBuffer.allocate(40);
-                            if(socketChannel.read(buffer)!=0){
+
+                            if(socketChannel.read(buffer) >0){
                                 socketChannel.read(buffer) ;
                                 buffer.flip();
+                                System.out.println(new String(buffer.array()));
                                 System.out.println(Thread.currentThread().getName()+" -- " +new String(buffer.array()));
+
                                 ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
                                 socketChannel.write(byteBuffer);
 
+                            } else if (socketChannel.read(buffer) == 0) {
+                                System.out.println("未读取到数据");
+                                // 等于0没有读取到东西，不做处理
+                            } else {
+                                // 当读取到-1 ，说明客户端断开了连接，关闭客户端
+                                socketChannel.close();
                             }
+
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

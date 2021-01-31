@@ -10,10 +10,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 /**
- * nio 轮询方式实现的NIO，有空轮询效率问题
- * 比如100W个连接进来，但是只有20W连接会有写消息，但是此方式还是会循环100W次
- *
- * 最好的办法还是让系统能够在有消息的时候通知我们的读取消息  linux epoll
+ * nio 多路复用器
  */
 public class QQServerNioListener {
 
@@ -50,13 +47,21 @@ public class QQServerNioListener {
 
                     SocketChannel socketChannel  = (SocketChannel) selectionKey.channel();
                     ByteBuffer buffer = ByteBuffer.allocate(40);
-                    if(socketChannel.read(buffer)!=0){
+                    if(socketChannel.read(buffer) >0){
                         socketChannel.read(buffer) ;
                         buffer.flip();
                         System.out.println(new String(buffer.array()));
                         ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
                         socketChannel.write(byteBuffer);
 
+                    } else if (socketChannel.read(buffer) == 0) {
+                        System.out.println("未读取到数据");
+                        // 等于0没有读取到东西，不做处理
+                        break;
+                    } else {
+                        // 当读取到-1 ，说明客户端断开了连接，关闭客户端
+                        socketChannel.close();
+                        break;
                     }
 
                 }
