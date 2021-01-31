@@ -13,9 +13,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Nio Reactor模式
- *  1个selector/boss + workersPool
- *
- *
+ * 1个selector/boss + workersPool
  */
 public class QQServerNioPool {
 
@@ -27,6 +25,8 @@ public class QQServerNioPool {
         serverSocketChannel.bind(new InetSocketAddress(8000));
         serverSocketChannel.configureBlocking(false);
         Selector selector = Selector.open();
+        // 绑定ServerSocketChannel与 selector的关系到 SelectedKey（ServerSocketChannel和SocketChannel有共同父类）
+        // 所以才可以通过SelectKey获取到channel 和Selector
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         while (true) {
             // 此方法为阻塞方法
@@ -34,34 +34,40 @@ public class QQServerNioPool {
             System.out.println("wait handle..");
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
 
-            for (SelectionKey selectionKey :selectionKeys){
+            for (SelectionKey selectionKey : selectionKeys) {
 
                 //连接如果是无效的就跳过，channel已经关闭了
-                if(!selectionKey.isValid()){
+                if (!selectionKey.isValid()) {
                     continue;
                 }
                 //如果客户端是要连接
-                if(selectionKey.isAcceptable()){
+                if (selectionKey.isAcceptable()) {
                     System.err.println("accept connection...");
                     ServerSocketChannel ServerSocketChannel = (ServerSocketChannel) selectionKey.channel();
                     SocketChannel socketChannel = ServerSocketChannel.accept();
                     socketChannel.configureBlocking(false);
-                    socketChannel.register(selector,SelectionKey.OP_READ);
+                    // 可以在连接之后，直接税配置一个ByteBuffer
+                    // socketChannel.register(selector,SelectionKey.OP_READ,ByteBuffer.allocate(44));
+
+                    socketChannel.register(selector, SelectionKey.OP_READ);
                 }
+
                 //如果是有客户端要读取
-                if(selectionKey.isReadable()){
+                if (selectionKey.isReadable()) {
                     System.out.println("read data");
                     workerPool.execute(() -> {
                         try {
-                            System.out.println(Thread.currentThread().getName()+" -- handle data");
-                            SocketChannel socketChannel  = (SocketChannel) selectionKey.channel();
+                            System.out.println(Thread.currentThread().getName() + " -- handle data");
+                            SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+                            // 获取连接中配置的ByteBuffer
+                            // ByteBuffer attachment = (ByteBuffer) selectionKey.attachment();
                             ByteBuffer buffer = ByteBuffer.allocate(40);
 
-                            if(socketChannel.read(buffer) >0){
-                                socketChannel.read(buffer) ;
+                            if (socketChannel.read(buffer) > 0) {
+                                socketChannel.read(buffer);
                                 buffer.flip();
                                 System.out.println(new String(buffer.array()));
-                                System.out.println(Thread.currentThread().getName()+" -- " +new String(buffer.array()));
+                                System.out.println(Thread.currentThread().getName() + " -- " + new String(buffer.array()));
 
                                 ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
                                 socketChannel.write(byteBuffer);
@@ -82,7 +88,6 @@ public class QQServerNioPool {
                 }
 
 
-
 //                if(selectionKey.isWritable()){
 //                    System.out.println("write data");
 //                    ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
@@ -95,5 +100,5 @@ public class QQServerNioPool {
 
         }
 
-   }
+    }
 }
