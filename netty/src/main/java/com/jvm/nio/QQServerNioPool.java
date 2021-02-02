@@ -7,6 +7,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,13 +31,14 @@ public class QQServerNioPool {
         // 所以才可以通过SelectKey获取到channel 和Selector
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         while (true) {
-            // 此方法为阻塞方法
-            selector.select(2000);//等有事件发生了才会继续
+            // 此方法为阻塞方法//等有事件发生了才会继续
+           selector.select(2000);
             System.out.println("wait handle..");
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
 
-            for (SelectionKey selectionKey : selectionKeys) {
-
+            Iterator<SelectionKey> iterator = selectionKeys.iterator();
+            while (iterator.hasNext()) {
+                SelectionKey selectionKey = iterator.next();
                 //连接如果是无效的就跳过，channel已经关闭了
                 if (!selectionKey.isValid()) {
                     continue;
@@ -61,12 +64,12 @@ public class QQServerNioPool {
                             SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
                             // 获取连接中配置的ByteBuffer
                             // ByteBuffer attachment = (ByteBuffer) selectionKey.attachment();
-                            ByteBuffer buffer = ByteBuffer.allocate(40);
-
+                            ByteBuffer buffer = ByteBuffer.allocate(80);
                             if (socketChannel.read(buffer) > 0) {
+
                                 socketChannel.read(buffer);
                                 buffer.flip();
-                                System.out.println(new String(buffer.array()));
+                                System.out.println(new String(buffer.array(), StandardCharsets.UTF_8));
                                 System.out.println(Thread.currentThread().getName() + " -- " + new String(buffer.array()));
 
                                 ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
@@ -76,6 +79,7 @@ public class QQServerNioPool {
                                 System.out.println("未读取到数据");
                                 // 等于0没有读取到东西，不做处理
                             } else {
+                                System.err.println("客户端断开连接");
                                 // 当读取到-1 ，说明客户端断开了连接，关闭客户端
                                 socketChannel.close();
                             }
@@ -86,16 +90,7 @@ public class QQServerNioPool {
                         }
                     });
                 }
-
-
-//                if(selectionKey.isWritable()){
-//                    System.out.println("write data");
-//                    ByteBuffer byteBuffer = ByteBuffer.wrap("success".getBytes());
-//                    SocketChannel socketChannel  = (SocketChannel) selectionKey.channel();
-//                    socketChannel.write(byteBuffer);
-//                }
-                selectionKeys.remove(selectionKey);
-                selectionKeys.clear();
+                iterator.remove();
             }
 
         }
