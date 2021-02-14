@@ -52,7 +52,7 @@ public class MyMessageProtocolDecoder extends ByteToMessageDecoder {
                 //读取body内容
                 byte[] body = new byte[length];
                 byteBuf.readBytes(body);
-                //拼装Messageprotocol
+                //拼装MessageProtocol
                 MessageProtocol messageProtocol = new MessageProtocol();
                 messageProtocol.setLen(length);
                 messageProtocol.setBody(body);
