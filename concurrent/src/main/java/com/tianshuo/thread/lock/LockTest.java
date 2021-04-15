@@ -1,5 +1,6 @@
 package com.tianshuo.thread.lock;
 
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 /**
  * @ClassName : LockTest

@@ -250,7 +250,7 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * 1、自旋，判断尾部节点为空，表示当前队列还未被初始化
-     * 2、new Node ，使用Cas操作让head指向新创建的Node节点，同时尾部节点也执行head
+     * 2、new Node ，使用Cas操作让head指向新创建的Node节点，同时尾部节点也指向head
      * 3、传递过来的Node节点的前驱节点指向新创建的Node，也就是head，然后使用Cas操作，让队列Tail指向传递过来的Node
      * 然后返回
      *
@@ -464,7 +464,7 @@ public abstract class AbstractQueuedSynchronizer
      * 4、设置当前节点的状态为CANCELED
      * 5、判断当前节点是否是尾节点，如果是直接移除，然后把当前节点的前驱节点设置为尾节点
      * 6、如果不是尾节点，如果时head节点，那么就是直接唤醒下个节点。
-     * 7、如果也不是head节点，则获取当前节点下个节点，如果下个节点状态<0或者能被改成-1,然后就当前节点下级节点，放到他的上级节点后面
+     * 7、如果也不是head节点，则获取当前节点下个节点，如果下个节点状态<0或者能被改成-1,然后就把当前节点下级节点，放到他的上级节点后面
      * （其实也是相当删除自己了)
      * Cancels an ongoing attempt to acquire.
      *
@@ -563,7 +563,7 @@ public abstract class AbstractQueuedSynchronizer
             /*
              * 当前驱节点waitStatus为 0 or PROPAGATE -3（传播状态用在共享锁情况下）状态时
              * 将其设置为SIGNAL状态，然后当前结点才可以可以被安全地park
-             * 1、能上级节点的waitStatus改成-1，说明当前节点目前是正常运行，是可以被唤醒
+             * 1、能将上级节点的waitStatus改成-1，说明当前节点目前是正常运行，是可以被唤醒
              * 2、当然从另外一个方面来说，下级节点的状态能把被唤醒这个状态记录在上级节点，上级节点在唤醒下级节点的时候，就非常
              * 方便
              */
@@ -616,7 +616,7 @@ public abstract class AbstractQueuedSynchronizer
             boolean interrupted = false;
             /**
              * 自旋判断当前的节点的前驱节点是否是head
-             * 如果当前节点的前置节点是的head的话，说明队列只有他一个人
+             * 如果当前节点的前置节点是的head的话，此时说明当前节点可以获取锁
              * 高并发的场景下，有可能这个的第一个拿到锁的线程已经的释放了锁，此时可以再尝试是否可以获取到锁
              */
             for (;;) {//死循环
@@ -1500,7 +1500,7 @@ public abstract class AbstractQueuedSynchronizer
          * 1.与同步队列不同，条件队列头尾指针是firstWaiter跟lastWaiter
          * 2.条件队列是在获取锁之后，也就是临界区进行操作，因此很多地方不用考虑并发
          * 为什么判断最后一个节点?
-         * 因为新的等待节点都是会加载最后
+         * 因为新的等待节点都是队列尾部
          *
          * a、判断lastWaiter不为空，并且状态不是Node.CONDITION即-2 ，调用unlinkCancelledWaiters，删除的所有被取消的等待节点
          * 然后t设置为新的lastWaiter
@@ -1512,7 +1512,7 @@ public abstract class AbstractQueuedSynchronizer
         private Node addConditionWaiter() {
             //当第一次进入此方法时，lastWaiter和firstWaiter都是null
             Node t = lastWaiter;
-            //如果最后一个节点被取消，则删除队列中被取消的节点,重新获取lastWaiter
+            //如果最后一个节点不是被取消的状态，则删除队列中被取消的节点,重新获取lastWaiter
             //至于为啥是最后一个节点后面会分析
             if (t != null && t.waitStatus != Node.CONDITION) {
                 //删除所有被取消的节点
