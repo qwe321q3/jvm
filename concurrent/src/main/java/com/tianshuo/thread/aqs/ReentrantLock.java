@@ -249,7 +249,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             int c = getState();
             /**
              * 1、先判断锁是否可以被占用
-             * 2、如果判断锁可以被占用个，继续判断是否需要去排队
+             * 2、如果判断锁可以被占用，继续判断是否需要去排队
              */
             if (c == 0) {
                 /**
