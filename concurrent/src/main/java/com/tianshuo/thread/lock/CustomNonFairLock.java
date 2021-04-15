@@ -18,7 +18,7 @@ import java.util.concurrent.locks.LockSupport;
  * 3、释放锁时，判断是当前线程是否为获取锁的线程，如果是的则用cas设置state为0，同时设置线程独占者为null
  *
  * <p>
- * 使用CAS来保证的锁状态信号量
+ * 使用CAS来保证的锁状态信号量 cmpxchg
  */
 public class CustomNonFairLock {
 
