@@ -13,17 +13,17 @@ public interface BinaryTree<E>{
     boolean isEmpty();
 
     /**
-     * 先序遍历  NLR 递归实现
+     * 先序遍历  NLR 递归实现 （ 根，左，右）
      */
     void preOrderTraverse();
 
     /**
-     * 中序遍历  LNR 递归实现
+     * 中序遍历  LNR 递归实现（ 左，根，右）
      */
     void inOrderTraverse();
 
     /**
-     * 后序遍历 LRN  递归实现
+     * 后序遍历 LRN  递归实现 归实现（ 左，右，根）
      */
     void postOrderTraverse();
 
