@@ -1,4 +1,4 @@
-package com.jvm.methodarea;
+package com.jvm.heap;
 
 /**
  * 字符串池
@@ -24,17 +24,22 @@ public class StringConstantPool {
         String s1 = new String("zhuge");
         String s2 = s1.intern();
 
-        //false
+        // false s1为对象地址,s2为zhuge 所以false
         System.out.println(s1 == s2);
+        // true
+        System.out.println(s1.equals(s2));
         //常用a,b,c等是有可能之前就存在在字符串常量池中的
-        //hellowyyy这个字符串在中字符串常量池中没有找到，所以的直接返回了堆中hellowyyy的引用
+        //hellowyyy这个字符串在中字符串常量池中没有找到时，会直接返回了堆中hellowyyy的引用
         String a1 = new String("hellow")+new String("yyy");
-//        String a2 = "hellowyyy";  如果执行此方法时候，就不再a4!=a1 ，执行代码之后，字符串常量池就有了hellowyyy字符串
+        //如果执行此方法时候，就不再a4!=a1 ，执行代码之后，字符串常量池就有了hellowyyy字符串
+        // 此时a4就是字符串常量池中的hellowyyy字符串了
+//        String a2 = "hellowyyy";
         String a4 = a1.intern();
 
         //false
 //        System.out.println(a2 == a1);
-        //true
+
+        //true 此时a4 == a1 == a1的堆内存地址
         System.out.println(a4 == a1);
 
 
