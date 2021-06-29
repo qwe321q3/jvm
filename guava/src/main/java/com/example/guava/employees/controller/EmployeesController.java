@@ -1,14 +1,15 @@
 package com.example.guava.employees.controller;
 
 
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.Metric;
+import com.example.guava.bloom.BloomFilterCase;
 import com.example.guava.employees.entity.Employees;
 import com.example.guava.employees.service.IEmployeesService;
+import com.google.common.hash.BloomFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author tianshuo
  * @since 2021-06-28
  */
+@Slf4j
 @RestController
 @RequestMapping("/employees/employees")
 public class EmployeesController {
@@ -25,13 +27,36 @@ public class EmployeesController {
     @Autowired
     private IEmployeesService employeesService;
 
+    @Autowired
+    private Meter requestMeter;
+
+
+
 
     @ResponseBody
     @GetMapping("/getEmployees")
     public Employees getEmployees(Integer id) {
+        // tps统计
+        requestMeter.mark();
+        // 经过布隆过滤器校验，过滤掉不存在的id
+        if (!BloomFilterCase.boomFilter.mightContain(id)) {
+            log.info("布隆过滤器拦截的id ， {}",id);
+            return null;
+        }
+
         Employees employees = employeesService.getById(id);
+
         return employees;
     }
+
+    @ResponseBody
+    @GetMapping("/add")
+    public String add(@RequestBody Employees employees) {
+        employeesService.save(employees);
+        return "ok";
+    }
+
+
 
     @ResponseBody
     @GetMapping("/test")
