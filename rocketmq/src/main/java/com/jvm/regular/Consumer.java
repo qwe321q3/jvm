@@ -24,20 +24,21 @@ import java.util.List;
 public class Consumer {
     public static void main(String[] args) throws MQClientException {
 
+        // 生产组的目的，是在事物消息的情况下，如果第一个生产端挂掉了，相同生产组中的另外一个生成端可以接管消息继续提交。
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer("bb");
-        defaultMQPushConsumer.setNamesrvAddr("192.168.31.98:9876");
+        defaultMQPushConsumer.setNamesrvAddr("192.168.32.128:9876");
         defaultMQPushConsumer.subscribe("RocketTopic", "userTag");
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         /**
          * 广播 消费全量消息
-         * 如果有10条消息 ，2个消费端 ，那么2个消费端共同消费这10条消息
+         * 如果有10条消息 ，2个消费端 ，那么2个消费端，每人都会消费10条消息
          */
-//        defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
+        //defaultMQPushConsumer.setMessageModel(MessageModel.BROADCASTING);
 
         /**
          * 集群 默认集群是集群模式
          *
-         * 如果有10条消息 ，2个消费端  ，那么2个消费端，每人都会消费10条消息
+         * 如果有10条消息 ，2个消费端，用的同一个消费组, 那么2个消费端共同消费这个10条消息
          */
         defaultMQPushConsumer.setMessageModel(MessageModel.CLUSTERING);
 
