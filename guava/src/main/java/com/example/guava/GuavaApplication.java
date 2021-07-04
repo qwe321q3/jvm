@@ -14,7 +14,7 @@ public class GuavaApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(GuavaApplication.class, args);
-        ConsoleReporter reporter = run.getBean(ConsoleReporter.class);
-        reporter.start(1, TimeUnit.SECONDS);
+//        ConsoleReporter reporter = run.getBean(ConsoleReporter.class);
+//        reporter.start(1, TimeUnit.SECONDS);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.guava.employees.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Metric;
 import com.example.guava.bloom.BloomFilterCase;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/employees/employees")
+@RequestMapping("/employees")
 public class EmployeesController {
 
     @Autowired
@@ -48,6 +49,21 @@ public class EmployeesController {
 
         return employees;
     }
+
+    @ResponseBody
+    @GetMapping("/page")
+    public IPage<Employees> page(Integer currentPage,Integer pageSize) {
+        IPage<Employees> employeesIPage = employeesService.queryEmployees(currentPage,pageSize);
+        return employeesIPage;
+    }
+
+    @ResponseBody
+    @GetMapping("/xmlPage")
+    public IPage<Employees> xmlPage(Integer currentPage,Integer pageSize) {
+        IPage<Employees> employeesIPage = employeesService.queryXmlEmployees(currentPage,pageSize);
+        return employeesIPage;
+    }
+
 
     @ResponseBody
     @GetMapping("/add")

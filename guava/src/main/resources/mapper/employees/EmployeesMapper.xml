@@ -2,4 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.guava.employees.mapper.EmployeesMapper">
 
+
+    <select id="xmlPage" resultType="com.example.guava.employees.entity.Employees" parameterType="com.example.guava.employees.entity.Employees">
+        select * from employees WHERE status=#{employees.status}
+    </select>
 </mapper>

@@ -16,6 +16,16 @@ import java.util.List;
  */
 public interface IEmployeesService extends IService<Employees> {
 
-    IPage<Employees> queryEmployees();
+    IPage<Employees> queryEmployees(Integer currentPage ,Integer pageSize);
+
+
+    IPage<Employees> queryXmlEmployees(Integer currentPage ,Integer pageSize);
+
+
+    /**
+     * 更新
+     * @param employees
+     */
+    void updateEmployees(Employees employees);
 
 }

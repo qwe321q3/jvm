@@ -27,7 +27,7 @@ public class BloomInit implements SmartInitializingSingleton {
     @Override
     public void afterSingletonsInstantiated() {
         log.info("----  --  布隆过滤器数据初始化开始 ");
-        IPage<Employees> employeesIPage = employeesService.queryEmployees();
+        IPage<Employees> employeesIPage = employeesService.queryEmployees(1,20);
         List<Employees> records = employeesIPage.getRecords();
         // 构建布隆过滤器设置误差为千分之1
         BloomFilterCase.boomFilter = BloomFilter.create(Funnels.integerFunnel(), 10000, 0.0001);
