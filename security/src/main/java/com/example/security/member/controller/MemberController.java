@@ -1,11 +1,12 @@
 package com.example.security.member.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.security.member.domain.UmsMember;
 import com.example.security.member.service.UmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class MemberController {
@@ -19,5 +20,16 @@ public class MemberController {
         UmsMember umsMember = umsMemberService.getById(id);
         return umsMember;
 
+    }
+
+    @GetMapping("/pageList")
+    public Page<UmsMember> pageList(Long currentPage, Long pageSize) {
+        return umsMemberService.pageList(currentPage, pageSize);
+    }
+
+    @PostMapping("/add")
+    public String add(@RequestBody UmsMember umsMember) {
+        umsMemberService.save(umsMember);
+        return "ok";
     }
 }
