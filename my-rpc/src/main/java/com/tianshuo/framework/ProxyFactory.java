@@ -24,7 +24,7 @@ public class ProxyFactory<T> {
                 invoke.setParam(args);
 
 
-                Protocol protocol = new HttpServer("localhost",8000);
+                Protocol protocol = new NettyServer("localhost",8000);
                 return protocol.send(invoke);
             }
         });
