@@ -19,6 +19,9 @@
         <module>reflection</module>
         <module>spring-shell</module>
         <module>my-rpc</module>
+        <module>guava</module>
+        <module>security</module>
+        <module>shardingsphere</module>
     </modules>
 
     <properties>
