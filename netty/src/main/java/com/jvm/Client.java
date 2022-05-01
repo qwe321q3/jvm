@@ -1,6 +1,8 @@
 package com.jvm;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -10,15 +12,19 @@ import java.util.Scanner;
  */
 public class Client {
     public static void main(String[] args) throws IOException {
-        Socket client = new Socket("127.0.0.1", 8080);
+        //创建客户端socket
+        Socket socket = new Socket("127.0.0.1",8000);
 
-        while(true) {
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.next();
-            client.getOutputStream().write(input.getBytes());
-            byte[]bytes = new byte[1024];
-            int len = client.getInputStream().read(bytes);
-            System.out.println("msg back "+new String( bytes,0,len));
+        OutputStream outputStream = socket.getOutputStream();
+
+        PrintStream printStream = new PrintStream(outputStream);
+
+        Scanner sc = new Scanner(System.in);
+        while (true){
+            System.out.print("这里说：");
+            printStream.println(sc.nextLine());
+            printStream.flush();
+
         }
 
     }
