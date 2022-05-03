@@ -27,14 +27,29 @@ public class NIOSelectorClient {
             selector = Selector.open();
             socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
-            socketChannel.connect(new InetSocketAddress("localhost", 8000));
-            // 绑定socketChannel与多路复用器Selector的关系，同时关注READ事件
-            socketChannel.register(selector, SelectionKey.OP_READ);
+            // 由于的connect是非阻塞的，很有可能连接时，没有连接上，所以要对连接多判断
+            // 当连接成功之后，再来注册read方法啊
+
+            doConnect();
+
             while (!socketChannel.finishConnect()){
 
             }
             System.out.println("已连接！");
         }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    static void doConnect() {
+        try {
+            if (socketChannel.connect(new InetSocketAddress("localhost", 8000))) {
+                // 绑定socketChannel与多路复用器Selector的关系，同时关注READ事件
+                socketChannel.register(selector, SelectionKey.OP_READ);
+            } else {
+                socketChannel.register(selector, SelectionKey.OP_CONNECT);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
