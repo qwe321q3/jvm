@@ -3,13 +3,10 @@ package com.tianshuo.framework.protocol.http;
 import com.alibaba.fastjson.JSONObject;
 import com.tianshuo.framework.Invoke;
 import com.tianshuo.framework.registry.LocalRegistry;
-import com.tianshuo.framework.util.ProtostuffUtils;
 
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;

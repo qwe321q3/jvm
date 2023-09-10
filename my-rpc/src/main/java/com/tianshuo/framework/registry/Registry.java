@@ -1,7 +1,5 @@
 package com.tianshuo.framework.registry;
 
-import java.util.HashMap;
-
 /**
  * 保存服务名称与实现类关系
  * @author tianshuo

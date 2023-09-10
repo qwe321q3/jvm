@@ -2,8 +2,8 @@ package com.example.shardingsphere.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.shardingsphere.entity.Dict;
-import com.example.shardingsphere.service.DictService;
 import com.example.shardingsphere.mapper.DictMapper;
+import com.example.shardingsphere.service.DictService;
 import org.springframework.stereotype.Service;
 
 /**

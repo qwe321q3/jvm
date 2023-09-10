@@ -1,7 +1,7 @@
 package com.example.security.member.mapper;
 
-import com.example.security.member.domain.UmsMember;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.security.member.domain.UmsMember;
 
 /**
  * @Entity com.example.security.member.domain.UmsMember

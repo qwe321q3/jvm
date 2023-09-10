@@ -1,7 +1,6 @@
 package com.tianshuo.main;
 
 import com.tianshuo.config.AppConfig;
-import com.tianshuo.model.Order;
 import com.tianshuo.model.User;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

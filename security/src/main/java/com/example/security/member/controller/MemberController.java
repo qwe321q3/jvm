@@ -6,8 +6,6 @@ import com.example.security.member.service.UmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 public class MemberController {
 

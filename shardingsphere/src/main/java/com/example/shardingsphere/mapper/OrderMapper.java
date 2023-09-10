@@ -1,7 +1,7 @@
 package com.example.shardingsphere.mapper;
 
-import com.example.shardingsphere.entity.Order;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.shardingsphere.entity.Order;
 
 /**
 * @author tianshuo

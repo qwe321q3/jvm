@@ -1,8 +1,6 @@
 package com.tianshuo.thread.atom;
 
-import com.tianshuo.thread.aqs.AbstractQueuedSynchronizer;
 import org.openjdk.jol.info.ClassLayout;
-import sun.misc.Unsafe;
 
 /**
  * @Classname AddressPointorTest

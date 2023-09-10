@@ -1,6 +1,5 @@
 package com.tianshuo.thread.d1;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.LockSupport;
 
 /**

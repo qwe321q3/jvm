@@ -1,19 +1,17 @@
 package com.jvm;
 
-import static org.junit.Assert.assertTrue;
-
 import com.jvm.annotation.AutoWired;
 import com.jvm.controller.UserController;
 import com.jvm.model.UserService;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for simple App.

@@ -1,6 +1,5 @@
 package com.example.security.config;
 
-import com.example.security.member.service.UmsMemberService;
 import com.example.security.member.service.impl.UmsMemberServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

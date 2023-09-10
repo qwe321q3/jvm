@@ -1,7 +1,6 @@
 package com.tianshuo.provider;
 
 import com.tianshuo.framework.protocol.Protocol;
-import com.tianshuo.framework.protocol.http.HttpServer;
 import com.tianshuo.framework.protocol.netty.NettyServer;
 import com.tianshuo.framework.registry.LocalRegistry;
 

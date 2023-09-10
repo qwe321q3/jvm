@@ -1,13 +1,7 @@
 package com.tianshuo.consumer;
 
-import com.tianshuo.framework.Invoke;
 import com.tianshuo.framework.ProxyFactory;
-import com.tianshuo.framework.protocol.Protocol;
-import com.tianshuo.framework.protocol.netty.NettyClient;
-import com.tianshuo.framework.protocol.netty.NettyServer;
 import com.tianshuo.provider.IHello;
-
-import java.lang.reflect.Method;
 
 public class Consumer {
     public static void main(String[] args) throws NoSuchMethodException {

@@ -3,12 +3,8 @@ package com.jvm.netty.base;
 import com.jvm.model.User;
 import com.jvm.util.ProtostuffUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
 
 /**
  * 聊天室客户端处理

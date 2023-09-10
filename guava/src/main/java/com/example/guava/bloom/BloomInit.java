@@ -1,10 +1,8 @@
 package com.example.guava.bloom;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.example.guava.bloom.BloomFilterCase;
 import com.example.guava.employees.entity.Employees;
 import com.example.guava.employees.service.IEmployeesService;
-import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import lombok.extern.slf4j.Slf4j;

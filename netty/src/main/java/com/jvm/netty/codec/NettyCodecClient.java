@@ -1,19 +1,11 @@
 package com.jvm.netty.codec;
 
-import com.jvm.model.User;
-import com.jvm.netty.base.NettyClientHandler;
-import com.jvm.util.ProtostuffUtils;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.util.CharsetUtil;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 /**
  * @ClassName : NettyCodecClient

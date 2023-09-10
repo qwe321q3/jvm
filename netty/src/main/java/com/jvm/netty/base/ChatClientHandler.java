@@ -1,14 +1,7 @@
 package com.jvm.netty.base;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  * 聊天室客户端处理

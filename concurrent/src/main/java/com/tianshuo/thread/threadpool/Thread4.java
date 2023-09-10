@@ -1,7 +1,5 @@
 package com.tianshuo.thread.threadpool;
 
-import java.util.concurrent.Callable;
-
 /**
  * @Classname Thread1
  * @Description TODO

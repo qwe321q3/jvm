@@ -1,13 +1,12 @@
 package com.example.shardingsphere.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.shardingsphere.entity.User;
-import com.example.shardingsphere.service.UserService;
 import com.example.shardingsphere.mapper.UserMapper;
+import com.example.shardingsphere.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.example.shardingsphere.service;
 
-import com.example.shardingsphere.entity.Dict;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.shardingsphere.entity.Dict;
 
 /**
 * @author tianshuo

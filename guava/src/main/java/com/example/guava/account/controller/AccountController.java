@@ -3,7 +3,6 @@ package com.example.guava.account.controller;
 import com.example.guava.account.entity.Account;
 import com.example.guava.account.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -3,11 +3,9 @@ package com.example.guava.employees.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.codahale.metrics.Meter;
-import com.codahale.metrics.Metric;
 import com.example.guava.bloom.BloomFilterCase;
 import com.example.guava.employees.entity.Employees;
 import com.example.guava.employees.service.IEmployeesService;
-import com.google.common.hash.BloomFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

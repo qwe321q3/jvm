@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.xml.ws.RequestWrapper;
-
 /**
  * @ClassName : UserController
  * @Description : 用户controller
